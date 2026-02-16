@@ -7,11 +7,7 @@ The goal is to keep the code:
 - Modular enough to extend (agents, places, sensors, movement rules)
 - Practical for notebook-driven exploration
 
-Core ideas
-- **Agents**: autonomous entities (people, vehicles, service workers)
-- **Places**: homes, workplaces, stations, intersections
-- **Environment**: a grid-based city (easy to visualize and modify)
-- **Dynamics**: step-based simulation with simple rules
+
 
 Repo overview
 - `src/simulated_city/`: the library students import

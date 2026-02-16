@@ -29,3 +29,27 @@ def test_load_config_reads_yaml(tmp_path) -> None:
     assert cfg.mqtt.client_id_prefix == "demo"
     assert cfg.mqtt.keepalive_s == 30
     assert cfg.mqtt.base_topic == "test"
+
+
+def test_load_config_finds_parent_config_yaml(tmp_path, monkeypatch) -> None:
+        # Simulate running from a subdirectory (like notebooks/)
+        root = tmp_path
+        (root / "config.yaml").write_text(
+                """
+                mqtt:
+                    host: parent.example.com
+                    port: 1883
+                    tls: false
+                    client_id_prefix: demo
+                    keepalive_s: 30
+                    base_topic: test
+                """.strip(),
+                encoding="utf-8",
+        )
+
+        subdir = root / "notebooks"
+        subdir.mkdir()
+        monkeypatch.chdir(subdir)
+
+        cfg = load_config("config.yaml")
+        assert cfg.mqtt.host == "parent.example.com"

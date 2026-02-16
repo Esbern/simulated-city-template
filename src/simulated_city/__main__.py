@@ -1,19 +1,26 @@
 from __future__ import annotations
 
-from .sim import CitySim
-from .types import Point
-from .viz import grid_to_ascii
+from .config import load_config
 
 
 def main() -> None:
-    sim = CitySim(width=20, height=10, seed=0)
-    sim.populate_random(n_agents=25, n_places=8)
+    """Small CLI smoke for the template.
 
-    for _ in range(5):
-        sim.step()
+    This template library intentionally does *not* ship simulation code.
+    Running this module just verifies configuration loading.
+    """
 
-    print(sim.metrics())
-    print(grid_to_ascii(sim.snapshot_grid()))
+    cfg = load_config()
+
+    print("simulated_city (template library)")
+    print("This package only includes config + MQTT helpers.")
+    print()
+    print(f"MQTT broker: {cfg.mqtt.host}:{cfg.mqtt.port} tls={cfg.mqtt.tls}")
+    print(f"MQTT base topic: {cfg.mqtt.base_topic}")
+    print()
+    print("Next:")
+    print("- See docs/mqtt.md for broker setup")
+    print("- See docs/exercises.md to build the simulation")
 
 
 if __name__ == "__main__":

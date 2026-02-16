@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import os
 from pathlib import Path
 from typing import Any
@@ -15,7 +15,7 @@ class MqttConfig:
     port: int
     tls: bool
     username: str | None
-    password: str | None
+    password: str | None = field(repr=False)
     client_id_prefix: str
     keepalive_s: int
     base_topic: str
@@ -31,7 +31,8 @@ def load_config(path: str | Path = "config.yaml") -> AppConfig:
     # This makes workshop setup easier while keeping secrets out of git.
     load_dotenv(override=False)
 
-    data = _load_yaml_dict(path)
+    resolved_path = _resolve_default_config_path(path)
+    data = _load_yaml_dict(resolved_path)
     mqtt = data.get("mqtt") or {}
 
     host = str(mqtt.get("host") or "localhost")
@@ -73,3 +74,45 @@ def _load_yaml_dict(path: str | Path) -> dict[str, Any]:
     if not isinstance(loaded, dict):
         raise ValueError(f"Config file {p} must contain a YAML mapping at top level")
     return loaded
+
+
+def _resolve_default_config_path(path: str | Path) -> Path:
+    """Resolve a config path in a notebook-friendly way.
+
+    When `load_config()` is called with the default relative filename
+    (`config.yaml`), users often run code from a subdirectory (e.g. `notebooks/`).
+    In that case we search parent directories so `config.yaml` at repo root is
+    still discovered.
+
+    If a custom path is provided (including nested relative paths), we do not
+    change it.
+    """
+
+    p = Path(path)
+
+    # Absolute paths, or already-existing relative paths, are used as-is.
+    if p.is_absolute() or p.exists():
+        return p
+
+    # Only apply parent-search for bare filenames like "config.yaml".
+    if p.parent != Path("."):
+        return p
+
+    def search_upwards(start: Path) -> Path | None:
+        for parent in [start, *start.parents]:
+            candidate = parent / p.name
+            if candidate.exists():
+                return candidate
+        return None
+
+    found = search_upwards(Path.cwd())
+    if found is not None:
+        return found
+
+    # If cwd isn't inside the project (common in some notebook setups), also
+    # search relative to this installed package location.
+    found = search_upwards(Path(__file__).resolve().parent)
+    if found is not None:
+        return found
+
+    return p

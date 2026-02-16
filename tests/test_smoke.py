@@ -1,10 +1,19 @@
-from simulated_city.sim import CitySim
+from simulated_city.config import MqttConfig
+from simulated_city.mqtt import topic
 
 
-def test_sim_runs_one_step() -> None:
-    sim = CitySim(width=10, height=10, seed=1)
-    sim.populate_random(n_agents=5, n_places=3)
-    before = sim.metrics().agent_count
-    sim.step()
-    after = sim.metrics().agent_count
-    assert before == after == 5
+def test_mqtt_topic_builder() -> None:
+    cfg = MqttConfig(
+        host="example.com",
+        port=1883,
+        tls=False,
+        username=None,
+        password=None,
+        client_id_prefix="demo",
+        keepalive_s=60,
+        base_topic="simulated-city",
+    )
+
+    assert topic(cfg, "") == "simulated-city"
+    assert topic(cfg, "/events") == "simulated-city/events"
+    assert topic(cfg, "events") == "simulated-city/events"

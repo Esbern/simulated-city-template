@@ -32,3 +32,6 @@ python -m jupyterlab
 ```bash
 python -m simulated_city
 ```
+
+Note: this template library intentionally ships only `simulated_city.config` and
+`simulated_city.mqtt`. The simulation itself is an exercise.

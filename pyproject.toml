@@ -21,15 +21,20 @@ dependencies = [
 dev = [
   "pytest>=8",
 ]
+geo = [
+  "pyproj>=3.6",
+]
 notebooks = [
   "jupyterlab>=4",
   "ipykernel>=6",
   "matplotlib>=3.8",
+  "folium>=0.15",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+pythonpath = ["src"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
