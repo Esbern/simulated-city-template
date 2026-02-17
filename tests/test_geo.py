@@ -19,3 +19,21 @@ def test_webmercator_utm32_roundtrip() -> None:
 
     assert x1 == pytest.approx(x0, abs=1e-6)
     assert y1 == pytest.approx(y0, abs=1e-6)
+
+
+def test_wgs2utm_utm2wgs_roundtrip_copenhagen_city_hall() -> None:
+    pyproj = pytest.importorskip("pyproj")
+    assert pyproj  # keep linters happy
+
+    from simulated_city.geo import utm2wgs, wgs2utm
+
+    # Copenhagen City Hall (approx.)
+    lat0 = 55.67597
+    lon0 = 12.56984
+
+    e, n = wgs2utm(lat0, lon0)
+    lat1, lon1 = utm2wgs(e, n)
+
+    # Round-trip should be very close.
+    assert lat1 == pytest.approx(lat0, abs=1e-6)
+    assert lon1 == pytest.approx(lon0, abs=1e-6)

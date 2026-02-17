@@ -15,6 +15,8 @@ from .geo import (
 	transform_many,
 	transform_xy,
 	webmercator_to_epsg25832,
+	wgs2utm,
+	utm2wgs,
 )
 from .mqtt import MqttClientHandle, PublishCheckResult, connect_mqtt, publish_json_checked, topic
 
@@ -28,6 +30,8 @@ __all__ = [
 	"transform_many",
 	"webmercator_to_epsg25832",
 	"epsg25832_to_webmercator",
+	"wgs2utm",
+	"utm2wgs",
 	"MqttClientHandle",
 	"PublishCheckResult",
 	"connect_mqtt",

@@ -25,6 +25,36 @@ from typing import Iterable
 
 EPSG_3857 = "EPSG:3857"
 EPSG_25832 = "EPSG:25832"
+EPSG_4326 = "EPSG:4326"
+
+
+def wgs2utm(lat: float, lon: float) -> tuple[float, float]:
+        """Convert WGS84 latitude/longitude to EPSG:25832 (UTM32) meters.
+
+        Parameters
+        - lat, lon: WGS84 latitude/longitude in degrees
+
+        Returns
+        - (easting, northing) in meters (EPSG:25832)
+
+        Notes
+        - Internally, pyproj expects (x, y) ordering. For EPSG:4326 that is
+            (lon, lat), which is why this calls :func:`transform_xy` with (lon, lat).
+        """
+
+        easting, northing = transform_xy(lon, lat, from_crs=EPSG_4326, to_crs=EPSG_25832)
+        return easting, northing
+
+
+def utm2wgs(easting: float, northing: float) -> tuple[float, float]:
+        """Convert EPSG:25832 (UTM32) meters to WGS84 latitude/longitude.
+
+        Returns
+        - (lat, lon) in degrees (EPSG:4326)
+        """
+
+        lon, lat = transform_xy(easting, northing, from_crs=EPSG_25832, to_crs=EPSG_4326)
+        return lat, lon
 
 
 def webmercator_to_epsg25832(x: float, y: float) -> tuple[float, float]:

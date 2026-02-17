@@ -30,7 +30,10 @@ pip install -e ".[dev,notebooks]"
 ## Optional: geospatial transforms (CRS)
 
 If you plan to work with real-world coordinates, install the optional geospatial
-extra to enable EPSG transforms (Web Mercator `EPSG:3857` ↔ `EPSG:25832`):
+extra to enable EPSG transforms.
+
+Geo helpers live in `simulated_city.geo` and include convenience functions like
+`wgs2utm(...)` / `utm2wgs(...)` plus the general `transform_xy(...)`.
 
 ```bash
 pip install -e ".[geo]"

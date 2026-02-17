@@ -27,6 +27,12 @@ python -m jupyterlab
 - Setup notes: `docs/mqtt.md`
 - Credentials: copy `.env.example` to `.env`
 
+## Geo / CRS transforms (optional)
+
+- Geo helper module: `simulated_city.geo`
+- Provides CRS transforms (including WGS84 (EPSG:4326) ↔ EPSG:25832 helpers)
+- Install extra: `pip install -e ".[geo]"` (see `docs/setup.md`)
+
 ## First run (CLI smoke)
 
 ```bash
@@ -34,4 +40,4 @@ python -m simulated_city
 ```
 
 Note: this template library intentionally ships only `simulated_city.config` and
-`simulated_city.mqtt`. The simulation itself is an exercise.
+`simulated_city.mqtt` (plus optional `simulated_city.geo`). The simulation itself is an exercise.
