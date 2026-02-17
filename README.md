@@ -4,6 +4,7 @@ Template project for a workshop where students learn **agent-based programming i
 
 ## Quickstart (Python 3.11)
 
+**Linux / macOS:**
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -12,6 +13,18 @@ pip install -e ".[dev,notebooks]"
 python -m pytest
 python -m jupyterlab
 ```
+
+**Windows (PowerShell):**
+```powershell
+python3 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+pip install -e ".[dev,notebooks]"
+python -m pytest
+python -m jupyterlab
+```
+
+*Note for Windows: If you get an execution policy error, run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` first.*
 
 ## Repo layout
 
@@ -25,7 +38,10 @@ python -m jupyterlab
 - Default broker settings live in `config.yaml` (HiveMQ-style)
 - MQTT helper module: `simulated_city.mqtt`
 - Setup notes: `docs/mqtt.md`
-- Credentials: copy `.env.example` to `.env`
+- **Credentials:** 
+  1. Copy `.env.example` to `.env`
+  2. Edit `.env` and enter your MQTT broker username and password
+  - Example: `MQTT_USERNAME=your_username` and `MQTT_PASSWORD=your_password`
 
 ## Geo / CRS transforms (optional)
 
