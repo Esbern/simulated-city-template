@@ -21,6 +21,12 @@ Windows (PowerShell):
 python -m pip install -U pip
 ```
 
+If you get an execution policy error, run this once:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
 ## Install the library (editable) + workshop tools
 
 ```bash
@@ -52,6 +58,12 @@ pip install -e ".[notebooks,geo]"
 
 ```bash
 jupyter lab
+```
+
+You can also run:
+
+```bash
+python -m jupyterlab
 ```
 
 ## Run tests
