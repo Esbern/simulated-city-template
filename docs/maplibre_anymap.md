@@ -155,6 +155,13 @@ Practical note used in the workshop:
 - Recoloring an existing marker is done by refresh:
   - `remove_marker(id)` then `add_marker(..., name=id, color=...)`
 
+Compatibility note:
+
+- `LiveMapLibreMap` patches the anymap-ts frontend bundle at runtime.
+- If a new anymap-ts release changes the bundle shape, the patch falls back to
+    `remove_marker(...)` + `add_marker(...)` for movement.
+- You can check `m._move_marker_supported` to confirm the in-place method is active.
+
 
 ## MQTT / threading rule (important)
 

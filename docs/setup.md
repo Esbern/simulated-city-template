@@ -1,6 +1,5 @@
 # Setup
 
-This project targets **Python 3.11**.
 This project targets **Python 3.11+**.
 
 ## Create and activate a virtual environment

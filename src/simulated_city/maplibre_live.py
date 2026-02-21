@@ -18,6 +18,7 @@ This keeps workshop code self-contained and works in Jupyter/VS Code notebooks.
 from __future__ import annotations
 
 import importlib.metadata
+import re
 import tempfile
 from pathlib import Path
 from typing import Dict, Optional, Tuple
@@ -32,6 +33,31 @@ def _require_anymap_ts():
 			"Install extras: `pip install -e .[notebooks]`"
 		) from exc
 	return MapLibreMap, STATIC_DIR
+
+
+def _inject_renderer_binding(content: str) -> str:
+	"""Ensure a stable MapLibreRenderer binding exists in the bundle."""
+	if re.search(r"\b(const|let|var)\s+MapLibreRenderer\b", content):
+		return content
+
+	match = re.search(r"export\{[^}]*\bas\s+MapLibreRenderer\b[^}]*\};", content)
+	if not match:
+		raise RuntimeError(
+			"Unsupported anymap-ts bundle shape: could not locate MapLibreRenderer export. "
+			"Try upgrading/downgrading anymap-ts, or update the patcher."
+		)
+
+	export_block = match.group(0)
+	id_match = re.search(r"([\w$]+)\s+as\s+MapLibreRenderer", export_block)
+	if not id_match:
+		raise RuntimeError(
+			"Unsupported anymap-ts bundle shape: could not parse MapLibreRenderer export. "
+			"Try upgrading/downgrading anymap-ts, or update the patcher."
+		)
+
+	renderer_id = id_match.group(1)
+	injection = f"const MapLibreRenderer={renderer_id};"
+	return content[: match.start()] + injection + export_block + content[match.end() :]
 
 
 def _patched_maplibre_esm_path() -> Path:
@@ -49,7 +75,7 @@ def _patched_maplibre_esm_path() -> Path:
 		anymap_version = "unknown"
 
 	# IMPORTANT: bump this when changing the injected JS patch.
-	patch_id = "move_marker_v4_ack_once"
+	patch_id = "move_marker_v5_regex_export"
 
 	cache_name = (
 		f"anymap_ts_maplibre_patched_move_marker_"
@@ -64,20 +90,7 @@ def _patched_maplibre_esm_path() -> Path:
 		# Already patched (or upstream added an equivalent patch marker).
 		return orig_path
 
-	needle = "var vjn={render:EPr};export{oDt as MapLibreRenderer,vjn as default};"
-	if needle not in content:
-		raise RuntimeError(
-			"Unsupported anymap-ts bundle shape: could not locate MapLibre export line. "
-			"Try upgrading/downgrading anymap-ts, or update the patcher."
-		)
-
-	# Create a stable local binding `MapLibreRenderer` so we can patch the prototype
-	# without depending on the minified class name (oDt).
-	content = content.replace(
-		needle,
-		"var vjn={render:EPr};const MapLibreRenderer=oDt;export{oDt as MapLibreRenderer,vjn as default};",
-		1,
-	)
+	content = _inject_renderer_binding(content)
 
 	patch_js = r"""
 ;(()=>{
