@@ -53,6 +53,6 @@ python scripts/demo/03_folium_map_city_hall.py
   - requires: `pip install -e ".[geo]"`
 
 - `03_folium_map_city_hall.py`
-  - builds a Folium map in WGS84 (no transforms)
+  - builds an anymap-ts map in WGS84 (no transforms)
   - saves `copenhagen_city_hall_map.html`
-  - requires: `pip install -e ".[notebooks]"` (or `pip install folium`)
+  - requires: `pip install -e ".[notebooks]"` (or `pip install anymap-ts[all]`)
