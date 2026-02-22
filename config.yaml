@@ -25,6 +25,3 @@ mqtt:
   # Client settings
   client_id_prefix: "simcity"
   keepalive_s: 60
-
-  # Topic defaults (projects can change these)
-  base_topic: "simulated-city"

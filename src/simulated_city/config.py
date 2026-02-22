@@ -18,7 +18,6 @@ class MqttConfig:
     password: str | None = field(repr=False)
     client_id_prefix: str
     keepalive_s: int
-    base_topic: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,7 +45,6 @@ def load_config(path: str | Path = "config.yaml") -> AppConfig:
 
     client_id_prefix = str(mqtt.get("client_id_prefix") or "simcity")
     keepalive_s = int(mqtt.get("keepalive_s") or 60)
-    base_topic = str(mqtt.get("base_topic") or "simulated-city")
 
     return AppConfig(
         mqtt=MqttConfig(
@@ -57,7 +55,6 @@ def load_config(path: str | Path = "config.yaml") -> AppConfig:
             password=password,
             client_id_prefix=client_id_prefix,
             keepalive_s=keepalive_s,
-            base_topic=base_topic,
         )
     )
 

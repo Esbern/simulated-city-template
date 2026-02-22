@@ -17,7 +17,6 @@ def test_load_config_reads_yaml(tmp_path) -> None:
           tls: false
           client_id_prefix: demo
           keepalive_s: 30
-          base_topic: test
         """.strip(),
         encoding="utf-8",
     )
@@ -28,7 +27,6 @@ def test_load_config_reads_yaml(tmp_path) -> None:
     assert cfg.mqtt.tls is False
     assert cfg.mqtt.client_id_prefix == "demo"
     assert cfg.mqtt.keepalive_s == 30
-    assert cfg.mqtt.base_topic == "test"
 
 
 def test_load_config_finds_parent_config_yaml(tmp_path, monkeypatch) -> None:
@@ -42,7 +40,6 @@ def test_load_config_finds_parent_config_yaml(tmp_path, monkeypatch) -> None:
                     tls: false
                     client_id_prefix: demo
                     keepalive_s: 30
-                    base_topic: test
                 """.strip(),
                 encoding="utf-8",
         )

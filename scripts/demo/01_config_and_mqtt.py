@@ -15,9 +15,10 @@ If imports fail, install the library first:
 from __future__ import annotations
 
 import json
+import time
 
 from simulated_city.config import load_config
-from simulated_city.mqtt import publish_json_checked, topic
+from simulated_city.mqtt import MqttConnector, MqttPublisher
 
 
 # Safety switch: publishing sends a real MQTT message.
@@ -28,11 +29,10 @@ ENABLE_PUBLISH = True
 def main() -> None:
     cfg = load_config()
 
-    events_topic = topic(cfg.mqtt, "events/demo")
+    events_topic = "simulated-city/events/demo"
     payload = json.dumps({"hello": "humtek"})
 
     print("MQTT broker:", f"{cfg.mqtt.host}:{cfg.mqtt.port}", "tls=", cfg.mqtt.tls)
-    print("Base topic:", cfg.mqtt.base_topic)
     print("Example publish topic:", events_topic)
     print("Payload:", payload)
 
@@ -42,16 +42,20 @@ def main() -> None:
         return
 
     print("\nPublishing one message...")
-    result = publish_json_checked(
-        cfg.mqtt,
-        topic=events_topic,
-        payload=payload,
-        client_id_suffix="demo-script",
-        wait_timeout_s=8.0,
-    )
-    print(result)
-    if result.error:
-        print("Issue:", result.error)
+    connector = MqttConnector(cfg.mqtt, client_id_suffix="demo-script")
+    publisher = MqttPublisher(connector)
+    try:
+        connector.connect()
+        if connector.wait_for_connection():
+            publisher.publish_json(events_topic, payload, qos=1)
+            print("Publish successful.")
+            # Wait a moment for message to be sent
+            time.sleep(0.1)
+        else:
+            print("Failed to connect to MQTT broker.")
+    finally:
+        if connector.client and connector.client.is_connected():
+            connector.disconnect()
 
 
 if __name__ == "__main__":

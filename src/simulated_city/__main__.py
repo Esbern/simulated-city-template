@@ -16,7 +16,6 @@ def main() -> None:
     print("This package only includes config + MQTT helpers.")
     print()
     print(f"MQTT broker: {cfg.mqtt.host}:{cfg.mqtt.port} tls={cfg.mqtt.tls}")
-    print(f"MQTT base topic: {cfg.mqtt.base_topic}")
     print()
     print("Next:")
     print("- See docs/mqtt.md for broker setup")

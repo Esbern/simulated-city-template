@@ -20,33 +20,31 @@ from __future__ import annotations
 
 import time
 from simulated_city.config import load_config
-from simulated_city.mqtt import connect_mqtt, topic
+from simulated_city.mqtt import MqttConnector
 
 
 def main() -> None:
     cfg = load_config()
 
     # Subscribe to the same topic as the publisher demo
-    subscribe_topic = topic(cfg.mqtt, "events/demo")
+    subscribe_topic = "simulated-city/events/demo"
 
     print("MQTT broker:", f"{cfg.mqtt.host}:{cfg.mqtt.port}", "tls=", cfg.mqtt.tls)
-    print("Base topic:", cfg.mqtt.base_topic)
     print("Subscribing to:", subscribe_topic)
     print("\nWaiting for messages (press Ctrl+C to stop)...\n")
 
     # Connect to MQTT
-    handle = connect_mqtt(cfg.mqtt, client_id_suffix="subscribe-demo", timeout_s=10.0)
-    client = handle.client
+    connector = MqttConnector(cfg.mqtt, client_id_suffix="subscribe-demo")
+    client = connector.client
 
     message_count = 0
 
     def on_connect(_client, _userdata, _connect_flags, _reason_code, _properties):
         """Callback for when the client connects to the broker."""
         print("[CONNECT] Connected to MQTT broker")
+        client.subscribe(subscribe_topic, qos=1)
+        print(f"Subscribed to {subscribe_topic}")
 
-    def on_disconnect(_client, _userdata, _disconnect_flags, _reason_code, _properties):
-        """Callback for when the client disconnects from the broker."""
-        print("[DISCONNECT] Disconnected from MQTT broker")
 
     def on_message(_client, _userdata, msg):
         """Callback for when a message is received."""
@@ -61,15 +59,11 @@ def main() -> None:
 
     # Set up callbacks
     client.on_connect = on_connect
-    client.on_disconnect = on_disconnect
     client.on_message = on_message
 
     try:
         # Start the client loop
-        client.loop_start()
-
-        # Subscribe to the topic
-        client.subscribe(subscribe_topic, qos=1)
+        connector.connect()
 
         # Keep the script running
         while True:
@@ -78,10 +72,8 @@ def main() -> None:
     except KeyboardInterrupt:
         print("\n\nShutting down...")
     finally:
-        try:
-            client.loop_stop()
-        finally:
-            client.disconnect()
+        if connector.client and connector.client.is_connected():
+            connector.disconnect()
         print("Done.")
 
 
