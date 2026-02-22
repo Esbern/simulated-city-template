@@ -10,8 +10,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          12.568610624019783,
-          55.67605869647113
+          12.568101005027131,
+          55.676231114969
         ]
       },
       "id": "feature-1"
@@ -19,56 +19,77 @@
     {
       "type": "Feature",
       "properties": {
-        "__gm_id": "feature-6",
-        "__gm_shape": "line"
+        "__gm_id": "feature-4",
+        "__gm_shape": "marker"
       },
       "geometry": {
-        "type": "LineString",
+        "type": "Point",
         "coordinates": [
-          [
-            12.568410751864633,
-            55.67600695672334
-          ],
-          [
-            12.568189853296843,
-            55.67604623190729
-          ],
-          [
-            12.568160002138853,
-            55.67612366001137
-          ],
-          [
-            12.568110250209287,
-            55.67616349615011
-          ],
-          [
-            12.568218709415532,
-            55.67617359544633
-          ]
+          12.567974941088721,
+          55.67609348507841
         ]
       },
-      "id": "feature-6"
+      "id": "feature-4"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "__gm_id": "feature-7",
+        "__gm_shape": "marker"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.568589167509828,
+          55.6760118143651
+        ]
+      },
+      "id": "feature-7"
     },
     {
       "type": "Feature",
       "properties": {
         "__gm_id": "feature-10",
-        "__gm_shape": "line"
+        "__gm_shape": "marker"
       },
       "geometry": {
-        "type": "LineString",
+        "type": "Point",
         "coordinates": [
-          [
-            12.568218709415532,
-            55.67617359544633
-          ],
-          [
-            12.56833512893138,
-            55.676161812933685
-          ]
+          12.568465785783673,
+          55.676076848465584
         ]
       },
       "id": "feature-10"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "__gm_id": "feature-13",
+        "__gm_shape": "marker"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.568739371350745,
+          55.675871158847826
+        ]
+      },
+      "id": "feature-13"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "__gm_id": "feature-16",
+        "__gm_shape": "marker"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.568350450691696,
+          55.6759407304572
+        ]
+      },
+      "id": "feature-16"
     }
   ]
 }

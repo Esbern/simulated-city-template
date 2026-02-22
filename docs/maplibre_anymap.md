@@ -329,6 +329,139 @@ m.move_layer("roads", "3d-buildings")  # Roads will be below buildings
 ```
 
 
+## Controls and drawing
+
+### `add_draw_control(position="top-right", draw_modes=None, edit_modes=None, collapsed=False, ...) -> None`
+
+Add a drawing control for creating and editing geometry (points, lines, polygons).
+
+**Parameters:**
+
+- `position`: Control position (`"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`)
+- `draw_modes`: List of drawing modes. Default: `["polygon", "line", "rectangle", "circle", "marker"]`. Valid modes: `"polygon"`, `"line"`, `"rectangle"`, `"circle"`, `"marker"`
+- `edit_modes`: List of edit modes. Default: `["select", "drag", "change", "rotate", "delete"]`
+- `collapsed`: Whether control starts collapsed (default: `False`)
+
+Example:
+
+```python
+m.add_draw_control(
+    position="top-left",
+    draw_modes=["marker", "line", "polygon"],
+    edit_modes=["select", "drag", "delete"]
+)
+```
+
+**Get drawn features:**
+
+```python
+# Retrieve all drawn features as GeoJSON
+draw_data = m.get_draw_data()
+print(draw_data)
+```
+
+**Save to file:**
+
+```python
+# Save drawn features to GeoJSON file
+m.save_draw_data("./features.geojson")
+```
+
+**Tip:** For the marker/point tool, click on the map to place points (don't drag). If markers appear transparent, try clicking to confirm placement.
+
+
+### `add_control_grid(position="top-right", default_controls=None, exclude=None, collapsed=True, title="", rows=None, columns=None, ...) -> None`
+
+Add a customizable grid of map controls/tools in the specified position.
+
+The control grid provides access to 26 built-in tools for map interaction, layer management, data visualization, and more.
+
+**Available controls (26 total):**
+
+- `globe` — Toggle globe projection
+- `fullscreen` — Enter fullscreen mode
+- `north` — Show north arrow
+- `terrain` — Toggle 3D terrain
+- `search` — Search/geocoding
+- `viewState` — View state inspector
+- `inspect` — Feature inspector
+- `vectorDataset` — Add vector dataset
+- `basemap` — Basemap switcher
+- `measure` — Measure distances and areas
+- `geoEditor` — Geometry editor (same as draw control)
+- `bookmark` — Save/load map views
+- `print` — Export map as image
+- `minimap` — Mini overview map
+- `swipe` — Swipe/compare two layers
+- `streetView` — Street view
+- `addVector` — Add vector data from URL
+- `cogLayer` — Add Cloud Optimized GeoTIFF
+- `zarrLayer` — Add Zarr dataset
+- `pmtilesLayer` — Add PMTiles layer
+- `stacLayer` — Add STAC item
+- `stacSearch` — Search STAC catalog
+- `planetaryComputer` — Planetary Computer integration
+- `gaussianSplat` — Gaussian splatting viewer
+- `lidar` — LiDAR viewer
+- `usgsLidar` — USGS 3DEP LiDAR
+
+**Parameters:**
+
+- `position`: Control position
+- `default_controls`: List of control names to include. If `None`, all 26 controls are shown
+- `exclude`: List of control names to exclude from defaults. Ignored if `default_controls` is set
+- `collapsed`: Whether grid starts collapsed (default: `True`)
+- `title`: Optional header title
+- `rows`, `columns`: Grid layout dimensions (auto-calculated if not set)
+
+**Example — Show all controls:**
+
+```python
+m.add_control_grid(
+    position="top-right",
+    collapsed=True,
+    title="Tools"
+)
+```
+
+**Example — Show only specific controls:**
+
+```python
+m.add_control_grid(
+    default_controls=["basemap", "measure", "geoEditor", "search", "fullscreen"],
+    position="top-right",
+    collapsed=True
+)
+```
+
+**Example — Exclude specific controls:**
+
+```python
+m.add_control_grid(
+    exclude=["plantaryComputer", "gaussianSplat", "usgsLidar"],
+    position="top-right",
+    collapsed=True
+)
+```
+
+
+### `add_control(control_type, position="top-right", ...) -> None`
+
+Add a single map control.
+
+**Parameters:**
+
+- `control_type`: Type of control (e.g., `"navigation"`, `"scale"`, `"fullscreen"`, etc.)
+- `position`: Control position
+
+Example:
+
+```python
+m.add_control("navigation", position="top-left")
+m.add_control("scale", position="bottom-right")
+```
+
+
 ## Raster data
 
 ### `add_tile_layer(url, name=None, attribution="", min_zoom=0, max_zoom=22, ...) -> None`
