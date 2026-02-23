@@ -15,6 +15,7 @@ This repository is a beginner-friendly workshop template for learning agent-base
 - MQTT helpers are in `simulated_city.mqtt` with `connect_mqtt()` and `publish_json_checked()` (self-subscribe publish verifier).
 - Optional geospatial helpers live in `simulated_city.geo` (pyproj-backed EPSG transforms).
 - CLI smoke entry point is `python -m simulated_city` (see `src/simulated_city/__main__.py`).
+- use anymap-ts for mapping and pypaho for MQTT client. Avoid extra dependencies to keep it simple.
 
 ## Configuration and secrets
 
