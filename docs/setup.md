@@ -50,6 +50,36 @@ Tip: for notebooks that include both mapping + CRS transforms, you can install b
 pip install -e ".[notebooks,geo]"
 ```
 
+## Set up a local MQTT broker (optional)
+
+If you want to test MQTT locally before connecting to a public broker, install **Mosquitto**:
+
+### macOS (using Homebrew)
+
+```bash
+brew install mosquitto
+brew services start mosquitto
+```
+
+Verify it's running:
+
+```bash
+lsof -i :1883
+```
+
+You should see `mosquitto` listening on port 1883.
+
+### Linux (Ubuntu/Debian)
+
+```bash
+sudo apt-get install mosquitto
+sudo systemctl start mosquitto
+```
+
+### Windows
+
+Download the installer from [mosquitto.org](https://mosquitto.org/download/) or use Windows Subsystem for Linux (WSL).
+
 ## Run notebooks
 
 - VS Code: open a notebook in `notebooks/` and select the `.venv` kernel.
@@ -64,6 +94,14 @@ You can also run:
 ```bash
 python -m jupyterlab
 ```
+
+## Recommended learning path
+
+1. Start with `notebooks/01_maps_and_coordinates.ipynb` to learn coordinate transforms
+2. Move to `notebooks/02_mqtt_intro/` for MQTT basics:
+   - `Broker_publisher.ipynb` — Publishing to local and public brokers
+   - `Broker_subscriber.ipynb` — Subscribing to messages
+3. Build your simulation using both concepts
 
 ## Run tests
 

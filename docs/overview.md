@@ -14,6 +14,8 @@ The goal is to keep the code:
 
 - `src/simulated_city/`: the library students import
 - `notebooks/`: workshop notebooks
+  - `01_maps_and_coordinates.ipynb` — Maps and coordinate system transforms
+  - `02_mqtt_intro/` — MQTT publisher and subscriber examples with multi-broker support
 - `docs/`: workshop handouts and exercises
 - `tests/`: small sanity checks
 
@@ -35,6 +37,10 @@ Module docs:
 - `docs/geo.md` — `simulated_city.geo` (optional)
 - `docs/__init__.md` — top-level package API (`simulated_city`)
 - `docs/__main__.md` — CLI smoke (`python -m simulated_city`)
+
+Developer docs:
+
+- `docs/testing.md` — test suite overview and how to run tests
 
 Workshop docs:
 

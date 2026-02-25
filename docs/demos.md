@@ -1,6 +1,10 @@
 # Demos (scripts)
 
-The notebook in `notebooks/01_simulated_city_basics.ipynb` is the primary teaching material.
+The notebooks in `notebooks/` are the primary teaching material.
+
+Start with:
+- `01_maps_and_coordinates.ipynb` — Maps and coordinate transforms
+- `02_mqtt_intro/` — MQTT publisher and subscriber examples
 
 If you prefer running the same ideas as plain Python scripts, see `scripts/demo/`.
 

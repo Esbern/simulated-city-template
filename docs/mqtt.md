@@ -1,25 +1,75 @@
 # MQTT
 
-This template includes **paho-mqtt** by default and ships with a committed `config.yaml` that points at a HiveMQ-style broker configuration.
+This template includes **paho-mqtt** by default and ships with a committed `config.yaml` that supports **multiple MQTT brokers simultaneously**.
 
 This document covers everything in `simulated_city.mqtt`:
 
 - `MqttConnector`
 - `MqttPublisher`
 
+## Quick Start: Using Multiple Brokers
+
+The configuration supports routing different messages to different brokers:
+
+```yaml
+mqtt:
+  active_profiles: [local, mqtthq]  # Connect to both brokers
+  profiles:
+    local:
+      host: "127.0.0.1"
+      port: 1883
+      tls: false
+    mqtthq:
+      host: "broker.mqttdashboard.com"
+      port: 1883
+      tls: false
+```
+
+Then in your code:
+
+```python
+from simulated_city.config import load_config
+
+cfg = load_config()
+
+# All configured brokers
+for profile_name, broker_cfg in cfg.mqtt_configs.items():
+    print(f"{profile_name}: {broker_cfg.host}:{broker_cfg.port}")
+
+# Connect to a specific broker
+connector = MqttConnector(cfg.mqtt_configs["local"], client_id_suffix="demo")
+```
+
+## Single Broker Setup
+
+If you only want one broker, set:
+
+```yaml
+mqtt:
+  active_profiles: [local]  # or [mqtthq] for public broker
+```
+
 ## Configure HiveMQ Cloud
 
-1. Edit `config.yaml`:
-   - Set `mqtt.host` to your HiveMQ cluster host (example: `xxxxxx.s1.eu.hivemq.cloud`)
-   - Keep `mqtt.port: 8883` and `mqtt.tls: true`
+1. Edit `config.yaml` and add a HiveMQ profile:
 
-2. Store credentials in a local `.env` file:
+```yaml
+mqtt:
+  active_profiles: [local, hivemq_cloud]
+  profiles:
+    hivemq_cloud:
+      host: "xxxxxx.s1.eu.hivemq.cloud"  # Your cluster host
+      port: 8883
+      tls: true
+      username_env: "HIVEMQ_USERNAME"
+      password_env: "HIVEMQ_PASSWORD"
+```
+
+2. Store credentials in `.env`:
 
 ```bash
-cp .env.example .env
-# edit .env and set:
-# HIVEMQ_USERNAME=...
-# HIVEMQ_PASSWORD=...
+HIVEMQ_USERNAME=your_username
+HIVEMQ_PASSWORD=your_password
 ```
 
 ## Connect from Python
@@ -97,6 +147,30 @@ publisher = MqttPublisher(connector)
 publisher.publish_json("my/topic", '{"data": 123}')
 ```
 
-## Using other brokers
+## Switching Between Single and Multiple Brokers
 
-Projects can switch brokers by editing `config.yaml` (host/port/tls) or by loading a different config file.
+You can quickly switch your setup by editing `config.yaml`:
+
+**For local development only:**
+```yaml
+mqtt:
+  active_profiles: [local]
+```
+
+**For local + public sharing:**
+```yaml
+mqtt:
+  active_profiles: [local, mqtthq]
+```
+
+**For cloud-only (production):**
+```yaml
+mqtt:
+  active_profiles: [hivemq_cloud]
+```
+
+Your code doesn't need to change—it automatically detects all active brokers via `cfg.mqtt_configs`.
+
+## Using Other Brokers
+
+Projects can add custom brokers by editing `config.yaml` and adding them to the `profiles` section. See `notebooks/02_mqtt_intro/` for practical multi-broker examples.
