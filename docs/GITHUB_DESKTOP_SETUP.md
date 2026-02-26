@@ -5,6 +5,7 @@ This guide explains how to set up and manage the GitHub Desktop + VS Code workfl
 ## Overview
 
 **Student workflow:**
+
 1. Clone repo with GitHub Desktop
 2. Create branch `phase-1` in GitHub Desktop
 3. Edit code in VS Code
@@ -14,6 +15,7 @@ This guide explains how to set up and manage the GitHub Desktop + VS Code workfl
 7. Repeat for Phase 2, 3, etc.
 
 **Your workflow:**
+
 1. Receive PR notifications
 2. Run validation scripts
 3. Review code
@@ -27,6 +29,7 @@ This guide explains how to set up and manage the GitHub Desktop + VS Code workfl
 ### 1. Create a GitHub Organization or Use Your Account
 
 If you don't have one already:
+
 - Go to GitHub.com
 - Create an organization for your class (or use your personal account)
 - Create a REPOSITORY from this template
@@ -54,7 +57,7 @@ Download GitHub Desktop: https://desktop.github.com/
 ### Students need to:
 
 1. **Install GitHub Desktop** (if not already installed)
-   - Download from https://desktop.github.com/
+   - Download from [https://desktop.github.com/](https://desktop.github.com/)
    - Sign in with their GitHub account
 
 2. **Clone the repository**
@@ -74,6 +77,7 @@ Download GitHub Desktop: https://desktop.github.com/
 ### When Student Finishes Phase 1:
 
 #### They do:
+
 1. Create branch `phase-1` in GitHub Desktop (Current Branch → New Branch)
 2. Implement Phase 1 in VS Code
 3. Run validation:
@@ -89,6 +93,7 @@ Download GitHub Desktop: https://desktop.github.com/
 8. Click "Create pull request"
 
 #### You do:
+
 1. **Notification step:** GitHub sends you an email about the new PR
 2. **Review step:**
    ```bash
@@ -161,6 +166,7 @@ python -m jupyterlab
 ```
 
 **In GitHub PR review:**
+
 - [ ] Structure valid (no monolithic notebooks)
 - [ ] No forbidden imports (folium, etc.)
 - [ ] Dependencies in pyproject.toml (not !pip install)
@@ -175,6 +181,7 @@ python -m jupyterlab
 ### Scenario 1: Phase 1 PR is Approved
 
 On GitHub.com:
+
 1. Click "Approve" button in the PR review
 2. Click "Merge pull request" button
 3. Confirm: "Confirm merge"
@@ -182,6 +189,7 @@ On GitHub.com:
 5. Leave a comment: "Phase 1 approved! Merged. Pull the updated main branch and create `phase-2` to start Phase 2."
 
 Student then:
+
 1. Switches to `main` branch in VS Code (click branch name bottom left)
 2. Syncs to pull the updated main (↻ icon)
 3. Creates new branch `phase-2` from updated main
@@ -194,11 +202,13 @@ Student then:
 ### Scenario 2: Phase 1 PR Needs Changes
 
 On GitHub.com:
+
 1. Click "Request changes" button
 2. Leave a comment: "The notebook has 500 cells. Split it into separate agent notebooks. See docs/exercises.md for examples."
 3. Close the PR (don't merge)
 
 Student then:
+
 1. Continues working on `phase-1` branch in VS Code
 2. Makes fixes
 3. Commits & syncs again
@@ -251,6 +261,7 @@ Then GitHub will automatically run validation on each PR (even without you manua
 ### 2. Use GitHub Protected Branches
 
 To require review before merge:
+
 1. Settings → Branches
 2. "Add rule" on `main` branch
 3. Require 1 approval before merge
@@ -298,6 +309,7 @@ A: Comment on PR: "I ran the notebook and got this error: [error]. Please fix an
 ## That's It!
 
 The workflow is simple:
+
 1. Student: code → commit → sync → PR
 2. You: review → approve/request changes → merge
 3. Repeat for next phase
