@@ -1,0 +1,188 @@
+#!/usr/bin/env python3
+"""
+Create a virtual environment with a selected Python interpreter.
+
+Finds all available Python versions, displays them to the user,
+and creates a .venv with the selected interpreter (must be >= 3.11).
+
+Works on Windows, macOS, and Linux.
+"""
+
+import subprocess
+import sys
+import os
+from pathlib import Path
+from typing import Optional, Tuple
+
+
+def get_python_version(executable: str) -> Optional[Tuple[int, int, int]]:
+    """
+    Get the version of a Python executable.
+    
+    Returns (major, minor, micro) or None if the executable is not Python or fails.
+    """
+    try:
+        result = subprocess.run(
+            [executable, "-c", "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            parts = result.stdout.strip().split(".")
+            return (int(parts[0]), int(parts[1]), int(parts[2]))
+    except (FileNotFoundError, ValueError, IndexError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
+def find_python_executables() -> dict[str, Tuple[int, int, int]]:
+    """
+    Find available Python executables on the system.
+    
+    Returns a dict mapping executable name to (major, minor, patch) version.
+    """
+    candidates = []
+    found = {}
+    seen = set()
+    
+    # Windows: try py launcher first
+    if sys.platform == "win32":
+        result = subprocess.run(
+            ["py", "-0p"],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0:
+            for line in result.stdout.strip().split("\n"):
+                # Output format: "-3.13-64       C:\Python313\python.exe"
+                parts = line.split()
+                if len(parts) >= 2:
+                    candidates.append(parts[-1])
+    
+    # Try common executable names directly first
+    base_names = ["python", "python3"]
+    for version in ["3.14", "3.13", "3.12", "3.11", "3.10", "3.9"]:
+        base_names.append(f"python{version}")
+    
+    # Try direct calls for cross-platform compatibility
+    for candidate in base_names:
+        version = get_python_version(candidate)
+        if version:
+            if candidate not in seen:
+                found[candidate] = version
+                seen.add(candidate)
+    
+    # Also try with full paths from which/where if available
+    for candidate in base_names:
+        try:
+            if sys.platform == "win32":
+                result = subprocess.run(
+                    ["where.exe", candidate],
+                    capture_output=True,
+                    text=True,
+                    timeout=2,
+                )
+            else:
+                result = subprocess.run(
+                    ["which", candidate],
+                    capture_output=True,
+                    text=True,
+                    timeout=2,
+                )
+            if result.returncode == 0:
+                exe_path = result.stdout.strip().split("\n")[0]  # Take first match
+                if exe_path and exe_path not in seen:
+                    version = get_python_version(exe_path)
+                    if version:
+                        found[exe_path] = version
+                        seen.add(exe_path)
+        except (FileNotFoundError, subprocess.TimeoutExpired, subprocess.CalledProcessError):
+            pass
+    
+    return found
+
+
+def format_version(version: Tuple[int, int, int]) -> str:
+    """Format a version tuple as a string."""
+    return f"{version[0]}.{version[1]}.{version[2]}"
+
+
+def main() -> int:
+    """Main entry point."""
+    print("Searching for Python interpreters...\n")
+    
+    # Find all Python executables
+    found = find_python_executables()
+    
+    if not found:
+        print("Error: No Python interpreters found on your system.")
+        print("Please install Python 3.11+ and try again.")
+        return 1
+    
+    # Filter and sort by version (descending)
+    valid = {exe: ver for exe, ver in found.items() if ver >= (3, 11)}
+    
+    if not valid:
+        print("Available Python versions:")
+        for exe, ver in sorted(found.items(), key=lambda x: x[1], reverse=True):
+            print(f"  {exe}: {format_version(ver)}")
+        print("\nError: No Python >= 3.11 found.")
+        print("Install Python 3.11+ (3.11–3.13 recommended) and try again.")
+        return 1
+    
+    # Sort by version descending (prefer newer versions)
+    sorted_executables = sorted(valid.items(), key=lambda x: x[1], reverse=True)
+    
+    print("Available Python versions (>= 3.11):")
+    for i, (exe, ver) in enumerate(sorted_executables, 1):
+        print(f"  [{i}] {exe}: {format_version(ver)}")
+    
+    # Prompt user
+    print()
+    while True:
+        try:
+            choice = input(f"Select Python version [1-{len(sorted_executables)}] (default: 1): ").strip()
+            if not choice:
+                choice = "1"
+            idx = int(choice) - 1
+            if 0 <= idx < len(sorted_executables):
+                selected_exe, selected_ver = sorted_executables[idx]
+                break
+            print(f"Please enter a number between 1 and {len(sorted_executables)}.")
+        except ValueError:
+            print(f"Please enter a valid number between 1 and {len(sorted_executables)}.")
+    
+    # Create venv
+    venv_path = Path(".venv")
+    print(f"\nCreating virtual environment with {selected_exe} ({format_version(selected_ver)})...")
+    
+    try:
+        result = subprocess.run(
+            [selected_exe, "-m", "venv", str(venv_path)],
+            check=False,
+        )
+        if result.returncode != 0:
+            print(f"Error: Failed to create virtual environment.")
+            return 1
+    except FileNotFoundError:
+        print(f"Error: Could not find {selected_exe}")
+        return 1
+    
+    # Print next steps
+    print(f"\n✓ Virtual environment created at {venv_path}")
+    print("\nNext steps:")
+    if sys.platform == "win32":
+        print(f"  1. Activate:  .\\{venv_path}\\Scripts\\Activate.ps1")
+        print(f"  2. Upgrade pip: python -m pip install -U pip")
+        print(f"  3. Install dependencies: pip install -e \".[dev,notebooks]\"")
+    else:
+        print(f"  1. Activate:  source {venv_path}/bin/activate")
+        print(f"  2. Upgrade pip: python -m pip install -U pip")
+        print(f"  3. Install dependencies: pip install -e \".[dev,notebooks]\"")
+    
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

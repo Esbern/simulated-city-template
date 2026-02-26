@@ -30,9 +30,19 @@ python3 -c "import sys; print(sys.version); assert sys.version_info >= (3, 11)"
 python --version
 ```
 
-macOS / Linux:
+### All platforms (recommended):
 
-Most reliable option (recommended): use the helper script to create `.venv` using the first Python on your PATH that is **>= 3.11**:
+Use the interactive Python helper script. It finds all Python versions on your system, lets you select the one you want, and creates the venv:
+
+```bash
+python scripts/create_venv.py
+```
+
+The script displays available Python versions (>= 3.11), lets you pick one, creates the venv, and shows the next steps.
+
+### macOS / Linux:
+
+Alternatively, use the bash helper script to create `.venv` using the first Python on your PATH that is **>= 3.11**:
 
 ```bash
 ./scripts/create_venv.sh
@@ -40,7 +50,7 @@ source .venv/bin/activate
 python -m pip install -U pip
 ```
 
-Manual option:
+Manual option (not recommended):
 
 If you are not sure which `python3` you have (and want to avoid accidentally using Python 3.9/3.10), use this snippet to pick the first installed Python that is **>= 3.11**:
 
@@ -85,50 +95,39 @@ python3 --version
 python3.11 --version
 ```
 
-Windows (PowerShell):
+### Windows:
+
+The Python script (recommended method for all platforms) works great on Windows too:
 
 ```powershell
-py -3.11 -m venv .venv
+python scripts/create_venv.py
+```
+
+Alternatively, if you prefer the `py` launcher, create the venv manually:
+
+```powershell
+py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -U pip
 ```
 
-If you have multiple versions installed and want to avoid picking an older one, choose an explicit version you have (3.11+), for example:
+Use `py -3.11`, `py -3.12`, or `py -3.13` if you have those versions installed.
 
-```powershell
-py -3.13 -m venv .venv
-```
-
-If you do not have Python 3.11 installed, `py -3.11` will fail. Install Python 3.11+ (3.11–3.13 recommended if you hit package compatibility issues).
-
-To see which Python installations the launcher can see:
+If you have multiple versions installed and want to see them:
 
 ```powershell
 py -0p
 ```
 
-Optional “version gate” (check what `py -3` would use):
+If you do not have Python 3.11+, install it first (3.11–3.13 recommended if you hit package compatibility issues).
 
-```powershell
-py -3 -c "import sys; print(sys.version); assert sys.version_info >= (3, 11)"
-```
-
-Note: if you are using a very new Python version (for example a new major release), some third-party packages may not have wheels available yet. If installs fail, create the venv using Python 3.11–3.13.
-
-PowerShell does not include `which`. To see what command will run, use:
-
-```powershell
-Get-Command python -All
-where.exe python
-```
-
-If you already created `.venv` with the wrong Python version, delete `.venv` and create it again with the correct interpreter.
-
-If you get an execution policy error, run this once:
+If you get an execution policy error when activating, run this once:
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
+
+If you already created `.venv` with the wrong Python version, delete `.venv` and create it again with the correct interpreter.
 
 ## Install the library (editable) + workshop tools
 
