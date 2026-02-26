@@ -10,131 +10,37 @@ The package metadata enforces this (`requires-python >= 3.11`), so installs will
 
 If you have multiple Python versions installed, you may accidentally create the virtual environment with an older interpreter (for example Python 3.9/3.10). The interpreter you use to run `-m venv` is the Python version that will be used inside `.venv`.
 
-Quick check:
-
-- Before creating the venv, check the system interpreter you are about to use:
-
-```bash
-python3 --version
-```
-
-Optional “version gate” (exits with an error if Python is too old):
-
-```bash
-python3 -c "import sys; print(sys.version); assert sys.version_info >= (3, 11)"
-```
-
-- After activating the venv, confirm `python` now points to the venv interpreter:
-
-```bash
-python --version
-```
-
 ### All platforms (recommended):
 
-Use the interactive Python helper script. It finds all Python versions on your system, lets you select the one you want, and creates the venv:
+Use the Python helper script. It finds all Python versions on your system, lists them, and prompts you to choose one.
 
 ```bash
 python scripts/create_venv.py
 ```
 
-The script displays available Python versions (>= 3.11), lets you pick one, creates the venv, and shows the next steps.
-
-### macOS / Linux:
-
-Alternatively, use the bash helper script to create `.venv` using the first Python on your PATH that is **>= 3.11**:
+If you want to skip the prompt and pin the version, pass `--version`:
 
 ```bash
-./scripts/create_venv.sh
-source .venv/bin/activate
-python -m pip install -U pip
+python scripts/create_venv.py --version 3.12
 ```
 
-Manual option (not recommended):
-
-If you are not sure which `python3` you have (and want to avoid accidentally using Python 3.9/3.10), use this snippet to pick the first installed Python that is **>= 3.11**:
+You can also pin to an exact patch version if it is installed:
 
 ```bash
-chosen=""
-for py in python3.13 python3.12 python3.11 python3.14 python3; do
-   if command -v "$py" >/dev/null 2>&1; then
-      if "$py" -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)"; then
-         chosen="$py"
-         "$py" -m venv .venv
-         break
-      fi
-   fi
-done
-
-if [ -z "$chosen" ]; then
-   echo "No Python >= 3.11 found. Install Python 3.11+ (3.11–3.13 recommended) and try again."
-   exit 1
-fi
+python scripts/create_venv.py --version 3.12.10
 ```
 
-Then activate and continue:
+Always use `python -m pip` for installs. It is the most reliable and uniform option across platforms.
+
+If the script does not list a Python version that is >= 3.11, install it first:
+
+- macOS (Homebrew):
 
 ```bash
-source .venv/bin/activate
-python -m pip install -U pip
+brew install python@3.12
 ```
 
-If you want to pin the venv to a specific interpreter, you can use a versioned executable (if installed), for example:
-
-```bash
-python3.11 -m venv .venv
-```
-
-If you do not have any Python 3.11+ available, install Python 3.11+ first, or use a version manager (for example `pyenv` or `asdf`) to make 3.11+ your default.
-
-Helpful commands to see what you are actually running:
-
-```bash
-which -a python python3 python3.11
-python3 --version
-python3.11 --version
-```
-
-### Windows:
-
-The Python script (recommended method for all platforms) works great on Windows too:
-
-```powershell
-python scripts/create_venv.py
-```
-
-Alternatively, if you prefer the `py` launcher, create the venv manually:
-
-```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -U pip
-```
-
-Use `py -3.11`, `py -3.12`, or `py -3.13` if you have those versions installed.
-
-If you have multiple versions installed and want to see them:
-
-```powershell
-py -0p
-```
-
-Note: `py -0p` requires the **Python Launcher for Windows** (`py`). If you do not have it installed (or it is not on your PATH), that command will fail. The helper script `python scripts/create_venv.py` still works in that case and falls back to discovering `python` executables via your PATH.
-
-If you do not have Python 3.11+, install it first (3.11–3.13 recommended if you hit package compatibility issues).
-
-If you get an execution policy error when activating, run this once:
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-If your machine blocks running `pip.exe` directly, install packages via the venv’s Python instead:
-
-```powershell
-\.\.venv\Scripts\python.exe -m pip install -U pip
-\.\.venv\Scripts\python.exe -m pip install -e ".[dev,notebooks]"
-```
+- Windows: download and run the installer from https://www.python.org/downloads/
 
 If you already created `.venv` with the wrong Python version, delete `.venv` and create it again with the correct interpreter.
 
@@ -192,31 +98,22 @@ sudo systemctl start mosquitto
 
 Download the installer from [mosquitto.org](https://mosquitto.org/download/) or use Windows Subsystem for Linux (WSL).
 
-## Run notebooks
-
-- VS Code: open a notebook in `notebooks/` and select the `.venv` kernel.
-- Or start Jupyter:
-
-```bash
-jupyter lab
-```
-
-You can also run:
-
-```bash
-python -m jupyterlab
-```
-
-## Recommended learning path
-
-1. Start with `notebooks/01_maps_and_coordinates.ipynb` to learn coordinate transforms
-2. Move to `notebooks/02_mqtt_intro/` for MQTT basics:
-   - `Broker_publisher.ipynb` — Publishing to local and public brokers
-   - `Broker_subscriber.ipynb` — Subscribing to messages
-3. Build your simulation using both concepts
-
 ## Run tests
+
+Run tests to verify the libraries are installed, especially MQTT broker support. The MQTT tests validate all configured MQTT profiles (see `config.yaml`) and confirm the MQTT password is set in `.env`.
 
 ```bash
 python -m pytest
+```
+
+
+
+## Run notebooks
+
+By default, run notebooks in VS Code: open a notebook in `notebooks/` and select the `.venv` kernel.
+
+You can also run notebooks in a browser by starting JupyterLab:
+
+```bash
+python -m jupyterlab
 ```

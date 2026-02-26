@@ -8,9 +8,9 @@ and creates a .venv with the selected interpreter (must be >= 3.11).
 Works on Windows, macOS, and Linux.
 """
 
+import argparse
 import subprocess
 import sys
-import os
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -121,8 +121,47 @@ def format_version(version: Tuple[int, int, int]) -> str:
     return f"{version[0]}.{version[1]}.{version[2]}"
 
 
+def parse_version_arg(raw: str) -> Tuple[int, int, Optional[int]]:
+    """
+    Parse a version string like "3.12" or "3.12.10".
+
+    Returns (major, minor, micro_or_none).
+    """
+    parts = raw.strip().split(".")
+    if len(parts) not in (2, 3):
+        raise ValueError("Version must be in MAJOR.MINOR or MAJOR.MINOR.MICRO format.")
+    major = int(parts[0])
+    minor = int(parts[1])
+    micro = int(parts[2]) if len(parts) == 3 else None
+    return major, minor, micro
+
+
+def select_by_version(
+    candidates: list[tuple[str, Tuple[int, int, int]]],
+    version_arg: str,
+) -> Optional[tuple[str, Tuple[int, int, int]]]:
+    """Select a matching interpreter based on a version argument."""
+    major, minor, micro = parse_version_arg(version_arg)
+    if micro is None:
+        matching = [item for item in candidates if item[1][0] == major and item[1][1] == minor]
+    else:
+        matching = [item for item in candidates if item[1] == (major, minor, micro)]
+    if not matching:
+        return None
+    return max(matching, key=lambda item: item[1])
+
+
 def main() -> int:
     """Main entry point."""
+    parser = argparse.ArgumentParser(
+        description="Create a virtual environment with a selected Python interpreter.",
+    )
+    parser.add_argument(
+        "--version",
+        help="Pin the interpreter version (e.g., 3.12 or 3.12.10).",
+    )
+    args = parser.parse_args()
+
     print("Searching for Python interpreters...\n")
     
     # Find all Python executables
@@ -146,25 +185,43 @@ def main() -> int:
     
     # Sort by version descending (prefer newer versions)
     sorted_executables = sorted(valid.items(), key=lambda x: x[1], reverse=True)
-    
-    print("Available Python versions (>= 3.11):")
-    for i, (exe, ver) in enumerate(sorted_executables, 1):
-        print(f"  [{i}] {exe}: {format_version(ver)}")
-    
-    # Prompt user
-    print()
-    while True:
+
+    if args.version:
         try:
-            choice = input(f"Select Python version [1-{len(sorted_executables)}] (default: 1): ").strip()
-            if not choice:
-                choice = "1"
-            idx = int(choice) - 1
-            if 0 <= idx < len(sorted_executables):
-                selected_exe, selected_ver = sorted_executables[idx]
-                break
-            print(f"Please enter a number between 1 and {len(sorted_executables)}.")
-        except ValueError:
-            print(f"Please enter a valid number between 1 and {len(sorted_executables)}.")
+            selected = select_by_version(sorted_executables, args.version)
+        except ValueError as exc:
+            print(f"Error: {exc}")
+            return 1
+
+        if not selected:
+            print("Available Python versions (>= 3.11):")
+            for exe, ver in sorted_executables:
+                print(f"  {exe}: {format_version(ver)}")
+            print(f"\nError: No Python matching {args.version} found.")
+            return 1
+
+        selected_exe, selected_ver = selected
+    else:
+        print("Available Python versions (>= 3.11):")
+        for i, (exe, ver) in enumerate(sorted_executables, 1):
+            print(f"  [{i}] {exe}: {format_version(ver)}")
+    
+        # Prompt user
+        print()
+        while True:
+            try:
+                choice = input(
+                    f"Select Python version [1-{len(sorted_executables)}] (default: 1): "
+                ).strip()
+                if not choice:
+                    choice = "1"
+                idx = int(choice) - 1
+                if 0 <= idx < len(sorted_executables):
+                    selected_exe, selected_ver = sorted_executables[idx]
+                    break
+                print(f"Please enter a number between 1 and {len(sorted_executables)}.")
+            except ValueError:
+                print(f"Please enter a valid number between 1 and {len(sorted_executables)}.")
     
     # Create venv
     venv_path = Path(".venv")
