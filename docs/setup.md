@@ -50,6 +50,21 @@ If you already created `.venv` with the wrong Python version, delete `.venv` and
 python -m pip install -e ".[dev,notebooks]"
 ```
 
+### Verify your installation
+
+After installing, verify that all packages are correct:
+
+```bash
+python scripts/verify_setup.py
+```
+
+This checks that you have:
+- Required packages (paho-mqtt, PyYAML, python-dotenv)
+- Notebook tools (`jupyterlab`, `anymap-ts`)
+- No conflicting packages (e.g., `folium`)
+
+If the check fails, run the install command above again.
+
 ## Optional: geospatial transforms (CRS)
 
 If you plan to work with real-world coordinates, install the optional geospatial
@@ -97,6 +112,41 @@ sudo systemctl start mosquitto
 ### Windows
 
 Download the installer from [mosquitto.org](https://mosquitto.org/download/) or use Windows Subsystem for Linux (WSL).
+
+## Troubleshooting
+
+### I installed `folium` or another mapping library
+
+Remove it immediately:
+
+```bash
+python -m pip uninstall folium folium-map
+```
+
+The workshop uses **`anymap-ts`** as the mapping tool. It integrates better with real-time MQTT data streams and geospatial transforms. Other tools (like `folium`, `matplotlib`, `plotly`) are not compatible with this workshop's structure.
+
+### I see "ModuleNotFoundError: No module named 'anymap_ts'"
+
+Run the verification script:
+
+```bash
+python scripts/verify_setup.py
+```
+
+Then reinstall with the correct extras:
+
+```bash
+python -m pip install -e ".[notebooks]"
+```
+
+### Notebooks are in one big file instead of communicating via MQTT
+
+This is a common mistake. You should structure notebooks as independent agents that publish/subscribe via MQTT:
+- `notebooks/agent_transport.ipynb` — simulates transport, publishes traffic data
+- `notebooks/agent_environment.ipynb` — simulates air quality, subscribes to traffic data
+- `notebooks/dashboard.ipynb` — subscribes to all agent topics, visualizes with `anymap-ts`
+
+See [exercises.md](exercises.md) for examples.
 
 ## Run tests
 
