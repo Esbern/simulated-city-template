@@ -82,13 +82,13 @@ git log --oneline | head -1
 2. Test: `python scripts/verify_setup.py && python -m pytest`
 3. Validate structure: `python scripts/validate_structure.py`
 4. Run the notebook manually and explain what it does
-5. Submit Phase 1 PR with description "Phase 1 only"
+5. **Submit Phase 1** (via Git PR if using GitHub, or folder snapshot if not)
 6. Once approved, ask for Phase 2 implementation
 
 **How to verify:**
 
 ```bash
-# After each phase PR, run:
+# After each phase submission, run:
 python scripts/verify_setup.py
 python scripts/validate_structure.py
 python -m pytest
@@ -102,7 +102,7 @@ python -m pytest
 
 **Review checklist:**
 
-- [ ] Does this PR implement ONLY the approved phase?
+- [ ] Does this submission implement ONLY the approved phase?
 - [ ] Did the student run validation scripts?
 - [ ] Does the code follow `.github/copilot-instructions.md`?
 - [ ] Can the student explain what the code does?
@@ -120,6 +120,57 @@ If > 300 cells, ask student to split it.
 grep -r "folium" notebooks/
 ```
 If found, ask them to use `anymap-ts` instead.
+
+---
+
+### Optional: Using GitHub Pull Requests
+
+**What:** A Pull Request (PR) is a GitHub feature that enforces code review workflow. Students submit code, you review, you approve before they move to the next phase.
+
+**Tools:** GitHub Desktop + VS Code (no terminal commands needed)
+- Students edit code in VS Code
+- Students commit/sync using GitHub Desktop GUI
+- Students create PR on GitHub.com
+- You review PR on GitHub.com
+
+**Pros:**
+- Enforces phase-gating (can't skip phases)
+- Creates a review trail (you can see what was built and when)
+- Visual (GUI-based, no command line needed)
+- Clean separation of work (one branch per phase)
+
+**Cons:**
+- Requires GitHub account setup (extra account per student)
+- Adds workflow overhead (but minimal with GUI)
+
+**Is it required?** No. You can use alternatives:
+
+| Approach | When to Use |
+|----------|------------|
+| **GitHub PRs** | Class already uses Git; you want automatic enforcement |
+| **Folder snapshots** | Simple alternative: student submits a `phase-1/` folder, you review it |
+| **Shared document** | Document each phase's progress in a Google Doc or shared spreadsheet |
+| **In-person review** | You meet with student, they show you the code running, you approve |
+
+**If using PRs:** See [STUDENT_GUIDE.md](../STUDENT_GUIDE.md) "Submitting Your Work (Pull Requests)" section.
+
+**If using folder snapshots:**
+```bash
+# After Phase 1, student submits:
+phase-1/
+├── notebooks/
+│   └── agent_transport.ipynb
+├── config.yaml
+└── PHASE_1_NOTES.md  # What they learned
+```
+Then you verify with:
+```bash
+python scripts/verify_setup.py
+python scripts/validate_structure.py
+python -m pytest
+```
+
+**Bottom line:** The **methodology** (document-driven, phased development) is what matters. PRs are one way to enforce it, but not the only way.
 
 ---
 

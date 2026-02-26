@@ -1,5 +1,9 @@
 # Student Quick Reference: Document-Driven AI Development
 
+**This guide teaches you how to use AI as a thinking tool, not just a code generator.**
+
+The workflow is the same whether you submit work via GitHub, folder snapshots, or in-person review. Check with your instructor which method your class uses.
+
 ## The Workflow (3 Steps)
 
 ### Step 1: Clarify (AI helps write docs, not code)
@@ -103,12 +107,200 @@ If a new model doesn't follow rules, respond with the "Common AI Mistakes" secti
 
 ---
 
-## PR Checklist Before Submitting
+## Submitting Your Work (Using GitHub Desktop & VS Code)
 
-- [ ] README filled in with 4-component template
-- [ ] AI clarified design (saved in docs or PR description)
-- [ ] You approved implementation plan
-- [ ] Only ONE phase implemented in this PR
+### What is a Pull Request?
+
+A **Pull Request (PR)** is how you submit code for review on GitHub:
+
+1. You work in VS Code (in a branch: separate copy of the project)
+2. You commit and sync using VS Code's Source Control panel (or GitHub Desktop)
+3. You create a PR on GitHub.com (ask instructor: "Ready for review?")
+4. Instructor reviews your code in the PR
+5. If approved, your changes merge into the main project
+
+**Why?** This enforces phase-gating. You can't start Phase 2 until Phase 1 is approved.
+
+### The Branch Flow
+
+Here's how phases progress:
+
+```
+main branch
+  │
+  ├── Create phase-1 branch
+  │   ├── Code Phase 1
+  │   ├── Commit + Sync
+  │   └── Create PR → Instructor reviews → Merge into main ✅
+  │
+  ├── Pull updated main
+  │
+  ├── Create phase-2 branch
+  │   ├── Code Phase 2
+  │   ├── Commit + Sync
+  │   └── Create PR → Instructor reviews → Merge into main ✅
+  │
+  └── Repeat for Phase 3, 4, 5...
+```
+
+Each phase builds on the previous approved phase.
+
+### Checklist Before You Commit
+
+Before you commit your Phase 1 work:
+
+- [ ] README filled in with 4-component template (your project idea)
+- [ ] AI clarified design (saved in your PR description or a doc)
+- [ ] You approved the implementation plan
+- [ ] **Only ONE phase implemented** ← Most important!
 - [ ] Tests passing: `python scripts/verify_setup.py && python -m pytest`
 - [ ] Structure valid: `python scripts/validate_structure.py`
-- [ ] PR description says which phase(s) included
+- [ ] PR description will say which phase(s) included (e.g., "Phase 1: Basic agent")
+
+### Workflow: VS Code (with GitHub Desktop as alternative)
+
+All Git operations can be done in VS Code. GitHub Desktop is an alternative if you prefer a visual Git interface.
+
+#### Step 1: Create a branch (in VS Code)
+```
+1. Open VS Code
+2. Look at the bottom left corner — you'll see the current branch name (e.g., "main")
+3. Click on it
+4. Select "+ Create new branch" from the dropdown
+5. Type the name: phase-1
+6. Press Enter
+```
+
+**Alternatively:** You can create the branch in GitHub Desktop:
+```
+1. Open GitHub Desktop
+2. Click "Current Branch" at the top
+3. Click "New Branch"
+4. Name it: phase-1
+5. Click "Create Branch"
+6. Then switch back to VS Code
+```
+
+#### Step 2: Make your changes (in VS Code)
+```
+1. Open VS Code
+2. Edit/create your notebooks, code, docs
+3. Run validation commands in the terminal:
+   python scripts/verify_setup.py
+   python scripts/validate_structure.py
+   python -m pytest
+```
+
+#### Step 3: Commit (in VS Code)
+```
+1. In VS Code, click the Source Control icon (Git icon on the left sidebar)
+2. You'll see your changed files listed
+3. Click the "+" next to each file to stage it (or click "+" at the top to stage all)
+4. Type a commit message in the box: "Phase 1: Basic agent with MQTT"
+5. Click the "✓ Commit" button
+```
+
+#### Step 4: Sync (in VS Code)
+```
+1. After committing, click the "Sync Changes" button that appears
+   (Or click the ↻ icon at the bottom left)
+2. This uploads your changes to GitHub.com
+3. First time: VS Code may ask "Publish Branch?" → Click "OK"
+```
+
+#### Step 5: Create a Pull Request (on GitHub.com)
+```
+1. Go to GitHub.com and open your repository
+2. You should see a notification: "Compare & pull request"
+3. Click it
+4. Fill in the PR description (see template below)
+5. Click "Create pull request"
+```
+
+### What to Put in Your PR Description
+
+When you create the PR, use this template:
+
+```
+## What Phase Is in This PR?
+
+Phase 1: Basic agent with MQTT
+
+## Design (from clarification phase)
+
+[Paste the design AI clarified for you]
+
+## What I Investigated
+
+[Briefly: what did you learn/test from this phase?]
+
+## Verification
+
+Ran these commands successfully:
+- [x] python scripts/verify_setup.py
+- [x] python scripts/validate_structure.py
+- [x] python -m pytest
+- [x] Manually tested notebooks (they run without errors)
+```
+
+### After Your Instructor Reviews
+
+Your instructor will:
+1. Look at your Phase 1 code
+2. Run validation scripts
+3. Either approve or ask for changes
+
+**If approved:**
+1. Instructor clicks "Merge pull request" on GitHub.com
+2. Your Phase 1 code is now in the main branch ✅
+3. **You** can now start Phase 2:
+   ```
+   1. In VS Code, switch to main branch (click branch name bottom left)
+   2. Click the ↻ sync icon to pull the updated main
+   3. Create a new branch: phase-2 (click branch name → "+ Create new branch")
+   4. Start implementing Phase 2
+   ```
+
+**If changes needed:**
+1. Fix them in VS Code (stay on the phase-1 branch)
+2. Commit again
+3. Sync
+4. The PR updates automatically
+5. Instructor re-reviews
+
+---
+
+### Quick Reference: VS Code Source Control
+
+| Action | How to Do It |
+|--------|--------------|
+| **See changes** | Click Source Control icon (left sidebar) |
+| **Stage files** | Click "+" next to file (or "+" at top for all) |
+| **Commit** | Type message, click "✓ Commit" button |
+| **Sync** | Click "Sync Changes" or ↻ icon (bottom left) |
+| **Switch branch** | Click branch name (bottom left) → select branch |
+| **Create branch** | Click branch name → "+ Create new branch" |
+
+**Alternatively:** You can use GitHub Desktop for all Git operations if you prefer a visual interface. The workflow is the same (create branch → commit → sync → PR).
+
+---
+
+### Troubleshooting
+
+**"I don't see the 'Sync Changes' button"**  
+Look at the bottom left of VS Code for the ↻ sync icon. Click it to sync.
+
+**"VS Code asks me to publish the branch"**  
+Click "OK" or "Publish Branch". This is normal the first time you sync a new branch.
+
+**"My changes don't show in Source Control"**  
+Make sure you saved your files (Ctrl+S or Cmd+S). Then click the Source Control icon to refresh.
+
+**"I'm on the wrong branch"**  
+Click the branch name at the bottom left → select the branch you want (e.g., `phase-1`).
+
+**"How do I see what I changed?"**  
+Click Source Control icon. Each file shows what changed (red = removed, green = added). Click a file to see the diff.
+
+**"I prefer a visual Git tool"**  
+Use GitHub Desktop instead. The workflow is the same, just with buttons instead of VS Code's Source Control panel.
