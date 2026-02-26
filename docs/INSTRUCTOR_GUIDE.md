@@ -7,6 +7,7 @@ This guide explains the pedagogy and how to enforce the methodology with student
 ### What We're Teaching
 
 Students are learning:
+
 1. **AI as a tool for thought clarification** — Not just code generation
 2. **Structured prompting** — How to ask AI the right questions in the right order
 3. **Validation and skepticism** — Don't trust AI output; verify it locally
@@ -16,6 +17,7 @@ Students are learning:
 ### Why This Matters
 
 Too many students use AI to:
+
 - Jump straight to implementation without understanding the problem
 - Generate monolithic code that "works" but isn't maintainable
 - Copy-paste packages (like `folium`) without considering integration
@@ -30,12 +32,14 @@ This workshop flips the script: **Documentation is the deliverable. Code is the 
 ### Phase 1: Design Clarification (Days 1-2)
 
 **What students do:**
+
 1. Fill in the 4-component template in README
 2. Prompt AI with Phase 1 prompt from README.md (clarify, don't code)
 3. Iterate with AI until the design is clear
 4. Save the clarified design in the README or PR description
 
 **How to verify:**
+
 ```bash
 # Check they filled in README
 git diff README.md | grep -i "trigger\|observer\|control\|response"
@@ -54,11 +58,13 @@ git log --oneline | head -1
 ### Phase 2: Implementation Planning (Day 2-3)
 
 **What students do:**
+
 1. Use Phase 2 prompt to ask AI for an implementation plan
 2. AI proposes 5-6 phases, each implementing one concept
 3. Student reviews and approves the plan
 
 **How to verify:**
+
 ```bash
 # PR should show the plan (in description or as a doc)
 # Should NOT contain extensive code yet
@@ -66,6 +72,7 @@ git log --oneline | head -1
 ```
 
 **Red flags:**
+
 - Plan is vague ("implement everything")
 - Plan suggests implementing 5 phases at once
 - Plan doesn't match the design from Phase 1
@@ -78,6 +85,7 @@ git log --oneline | head -1
 ### Phase 3: Phased Implementation (Week 1-2)
 
 **What students do:**
+
 1. Implement Phase 1 only
 2. Test: `python scripts/verify_setup.py && python -m pytest`
 3. Validate structure: `python scripts/validate_structure.py`
@@ -110,12 +118,14 @@ python -m pytest
 - [ ] Is the notebook size reasonable (<300 cells)?
 
 **Common violation: Monolithic notebook**  
+
 ```bash
 python -c "import json; nb = json.load(open('notebooks/agent_transport.ipynb')); print(f'Cells: {len(nb[\"cells\"])}')"
 ```
 If > 300 cells, ask student to split it.
 
-**Common violation: Using folium**  
+**Common violation: Using folium** 
+
 ```bash
 grep -r "folium" notebooks/
 ```
@@ -128,18 +138,21 @@ If found, ask them to use `anymap-ts` instead.
 **What:** A Pull Request (PR) is a GitHub feature that enforces code review workflow. Students submit code, you review, you approve before they move to the next phase.
 
 **Tools:** GitHub Desktop + VS Code (no terminal commands needed)
+
 - Students edit code in VS Code
 - Students commit/sync using GitHub Desktop GUI
 - Students create PR on GitHub.com
 - You review PR on GitHub.com
 
 **Pros:**
+
 - Enforces phase-gating (can't skip phases)
 - Creates a review trail (you can see what was built and when)
 - Visual (GUI-based, no command line needed)
 - Clean separation of work (one branch per phase)
 
 **Cons:**
+
 - Requires GitHub account setup (extra account per student)
 - Adds workflow overhead (but minimal with GUI)
 
@@ -155,6 +168,7 @@ If found, ask them to use `anymap-ts` instead.
 **If using PRs:** See [STUDENT_GUIDE.md](../STUDENT_GUIDE.md) "Submitting Your Work (Pull Requests)" section.
 
 **If using folder snapshots:**
+
 ```bash
 # After Phase 1, student submits:
 phase-1/
@@ -162,9 +176,11 @@ phase-1/
 │   └── agent_transport.ipynb
 ├── config.yaml
 └── PHASE_1_NOTES.md  # What they learned
+
 ```
 Then you verify with:
 ```bash
+
 python scripts/verify_setup.py
 python scripts/validate_structure.py
 python -m pytest
@@ -179,11 +195,13 @@ python -m pytest
 ### Scenario: Your school switches from ChatGPT to Claude
 
 **Good news:** The workflow is model-agnostic. Just provide students with:
+
 1. The updated Phase 1 prompt (they copy-paste it)
 2. The updated Phase 2 prompt
 3. Phase 3 implementation prompt with embedded rules
 
 **The validation tools do the heavy lifting:**
+
 - `python scripts/verify_setup.py` — Catches dependency mistakes
 - `python scripts/validate_structure.py` — Catches structural violations
 - `python -m pytest` — Worst-case scenario detection
@@ -193,6 +211,7 @@ If different models produce different outputs, the **validation scripts catch vi
 ### Scenario: Auto model selection (model changes per student/time)
 
 No problem. The workflow handles this because:
+
 1. Each prompt is self-contained with full rules
 2. Validation is local and deterministic
 3. You (the instructor) review before approving phases
@@ -218,6 +237,7 @@ A key skill: **rejecting AI output politely and specifically**.
 Show them [STUDENT_GUIDE.md](STUDENT_GUIDE.md) section "Common AI Mistakes".
 
 Examples:
+
 - ❌ "This doesn't work" 
 - ✅ "This uses folium, but we use anymap-ts. Rewrite it using anymap-ts from simulated_city."
 
@@ -236,12 +256,14 @@ Examples:
 ### Evaluate on:
 
 **1. Adherence to Methodology (40%)**
+
 - Did they document before coding?
 - Did they get an approved plan?
 - Did they implement phases sequentially?
 - PR descriptions mention phases?
 
 **2. Code Quality (30%)**
+
 - Passes `python scripts/validate_structure.py`
 - Passes `python -m pytest`
 - Uses `anymap-ts` (not forbidden tools)
@@ -249,12 +271,14 @@ Examples:
 - Proper MQTT architecture
 
 **3. Documentation (20%)**
+
 - README filled with 4-component template
 - Design clarification saved/documented
 - Implementation plan documented
 - Each notebook has clear comments
 
 **4. Student Explanation (10%)**
+
 - Can explain what their code does
 - Can identify which phase is being implemented
 - Can explain why they made architectural choices
@@ -319,9 +343,10 @@ grep -r "folium" notebooks/
 4. **[docs/exercises.md](docs/exercises.md)** — Concrete examples of proper structure
 5. **[docs/setup.md](docs/setup.md)** — Environment validation
 
-### Sample Rubric Text for Syllabus:
+### Sample Rubric Text for Syllabus
 
 > **Assessment:** Students are graded on:
+
 > - Following the document-driven development workflow (clarify → plan → implement phases)
 > - Code passing automated validation (`validate_structure.py`)
 > - Ability to explain architectural choices and which phase is implemented
@@ -361,11 +386,13 @@ Make it a habit, not an afterthought.
 ## Advanced: Teaching Students to Compare Models
 
 Once students master the workflow, have them try:
+
 1. Phase 1 clarification with Model A (e.g., Claude)
 2. Phase 1 clarification with Model B (e.g., ChatGPT)
 3. Compare the two clarifications
 
 ## Key insight:**
+
 > Different models clarify differently. Your job is to synthesize the best parts and reject the bad parts. This teaches critical thinking about AI output.
 
 ---

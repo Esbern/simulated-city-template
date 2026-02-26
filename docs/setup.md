@@ -10,7 +10,7 @@ The package metadata enforces this (`requires-python >= 3.11`), so installs will
 
 If you have multiple Python versions installed, you may accidentally create the virtual environment with an older interpreter (for example Python 3.9/3.10). The interpreter you use to run `-m venv` is the Python version that will be used inside `.venv`.
 
-### All platforms (recommended):
+### All platforms (recommended)
 
 Use the Python helper script. It finds all Python versions on your system, lists them, and prompts you to choose one.
 
@@ -40,7 +40,7 @@ If the script does not list a Python version that is >= 3.11, install it first:
 brew install python@3.12
 ```
 
-- Windows: download and run the installer from https://www.python.org/downloads/
+- Windows: download and run the installer from [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 If you already created `.venv` with the wrong Python version, delete `.venv` and create it again with the correct interpreter.
 
@@ -59,6 +59,7 @@ python scripts/verify_setup.py
 ```
 
 This checks that you have:
+
 - Required packages (paho-mqtt, PyYAML, python-dotenv)
 - Notebook tools (`jupyterlab`, `anymap-ts`)
 - No conflicting packages (e.g., `folium`)
@@ -142,6 +143,7 @@ python -m pip install -e ".[notebooks]"
 ### Notebooks are in one big file instead of communicating via MQTT
 
 This is a common mistake. You should structure notebooks as independent agents that publish/subscribe via MQTT:
+
 - `notebooks/agent_transport.ipynb` — simulates transport, publishes traffic data
 - `notebooks/agent_environment.ipynb` — simulates air quality, subscribes to traffic data
 - `notebooks/dashboard.ipynb` — subscribes to all agent topics, visualizes with `anymap-ts`
@@ -155,8 +157,6 @@ Run tests to verify the libraries are installed, especially MQTT broker support.
 ```bash
 python -m pytest
 ```
-
-
 
 ## Run notebooks
 
