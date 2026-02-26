@@ -18,7 +18,10 @@ Please:
 1. Rewrite the 4 components using clear technical language
 2. Identify MQTT topics each agent will publish/subscribe to
 3. List configuration parameters (MQTT broker, locations, thresholds)
-4. Point out any ambiguities
+4. Identify which notebooks to create (one per agent type)
+5. Identify what can be modeled as classes (vs simple functions)
+6. Suggest what belongs in library code (src/simulated_city/) vs notebooks
+7. Point out any ambiguities
 
 Do NOT write code.
 ```
@@ -35,7 +38,12 @@ Please propose phased implementation:
 - Phase 4: Add second agent with MQTT subscription
 - Phase 5: Add dashboard
 
-For each, list new files, tests, and what you should investigate first.
+For each phase, specify:
+1. **New files:** Which notebooks? Which library modules (src/simulated_city/)?
+2. **Classes vs functions:** What can be modeled as a class? What's just a helper function?
+3. **Notebook vs library:** What logic goes in notebooks (simulation loop, MQTT subscribe)? What goes in library (reusable utilities, data models)?
+4. **Tests/Verification:** What commands verify this phase works?
+5. **Investigation:** What should you understand before the next phase?
 
 Do NOT write code.
 ```
@@ -59,7 +67,64 @@ After code: Test it, understand it, then ask for Phase 2.
 
 ---
 
+## Understanding Architecture: Notebook vs Library Code
+
+One of the most important decisions in Phase 1-2 is **where code should live**:
+
+### Notebooks (notebooks/*.ipynb)
+**Use for:**
+- Simulation loops (while True: ... sleep())
+- MQTT subscriptions and event handlers  
+- Agent-specific behavior (one notebook per agent)
+- Dashboard/visualization code
+
+**Why:** Notebooks are for running simulations and visualizing results.
+
+### Library Code (src/simulated_city/*.py)
+**Use for:**
+- Reusable data models (dataclasses: Vehicle, Sensor, etc.)
+- Utility functions used by multiple notebooks
+- Complex calculations or algorithms
+- Configuration schemas
+- Anything that needs automated tests (pytest)
+
+**Why:** Library code is for reusable, testable components.
+
+### Classes vs Functions
+- **Classes:** For agents with state, data models (Vehicle, Sensor), services
+- **Functions:** For simple helpers, transformations, one-off calculations
+
+### Example Architecture
+
+Good design (distributed):
+```
+notebooks/
+  agent_transport.ipynb    # Transport agent: subscribes to traffic, publishes vehicle positions
+  agent_environment.ipynb  # Environment agent: simulates pollution based on vehicle data
+  dashboard.ipynb          # Visualizes everything on anymap-ts
+
+src/simulated_city/
+  models.py               # Vehicle, Sensor dataclasses
+  simulation.py           # Helper functions for movement, calculations
+```
+
+Bad design (monolithic):
+```
+notebooks/
+  everything.ipynb        # ❌ All agents + dashboard in one file
+```
+
+During planning (Step 2), the AI should identify which notebooks and which library modules to create. This makes your code:
+- Testable (library code can be tested with pytest)
+- Reusable (multiple notebooks can import the same classes)
+- Maintainable (each notebook has a clear purpose)
+
+---
+
 ## Common AI Mistakes (And How to Fix Them)
+
+### ❌ AI doesn't identify notebooks and library structure in planning
+You: "Before coding, tell me: which notebooks to create? Which classes go in src/simulated_city/? Which code is notebook-specific vs reusable?"
 
 ### ❌ AI tries to code without clarifying design
 You: "No code yet. Use Phase 1 prompt from README.md to clarify the design first."

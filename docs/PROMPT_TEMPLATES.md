@@ -33,34 +33,6 @@ Without explicit mode instructions, the AI may:
 
 ---
 
-## Architectural Planning: Notebook vs Library Code
-
-**When to use notebooks** (notebooks/*.ipynb):
-- Simulation loops (while True: ... sleep())
-- MQTT subscriptions and event handlers
-- Agent-specific behavior (one agent = one notebook)
-- Dashboard/visualization code
-
-**When to use library code** (src/simulated_city/*.py):
-- Reusable data models (dataclasses for Vehicle, Sensor, etc.)
-- Utility functions used by multiple notebooks
-- Complex calculations or algorithms
-- Configuration schemas
-- Anything that can be tested with pytest
-
-**Classes vs Functions:**
-- Use **classes** for: Agents with state, data models (Vehicle, Sensor), services
-- Use **functions** for: Simple helpers, transformations, one-off calculations
-
-**During Phase 1-2 planning, the AI should identify:**
-1. Which notebooks to create (e.g., `agent_transport.ipynb`, `dashboard.ipynb`)
-2. Which classes belong in library (e.g., `src/simulated_city/models.py` with `Vehicle` class)
-3. Which utilities belong in library (e.g., helper functions in existing modules)
-
-This prevents putting everything in notebooks (hard to test, hard to reuse).
-
----
-
 ## Template 1: Design Clarification (Phase 1)
 
 **Use this when:** You have a rough idea and want AI to clarify it.
@@ -85,11 +57,8 @@ Please:
 1. Rewrite the 4 components (Trigger, Observer, Control, Response) using clear technical language
 2. Identify the MQTT topics each agent will publish to and subscribe to
 3. List any configuration parameters (MQTT broker host/port, GPS coordinates, thresholds, etc.)
-4. Identify which notebooks to create (one notebook per agent type)
-5. Identify what can be modeled as classes (data models, agent logic) vs simple functions
-6. Suggest what belongs in library code (src/simulated_city/) vs notebooks
-7. Point out any ambiguities, missing details, or assumptions I've made
-8. Suggest realistic starting values for parameters (e.g., how many vehicles, pollution levels)
+4. Point out any ambiguities, missing details, or assumptions I've made
+5. Suggest realistic starting values for parameters (e.g., how many vehicles, pollution levels)
 
 Do NOT write any code. Just clarify the design.
 
@@ -125,12 +94,10 @@ Please propose a phased implementation (5-6 phases):
 - Phase 6: [Any additional phases needed]
 
 For EACH phase, provide:
-1. **New files:** What notebooks or library modules (src/simulated_city/) will be created/modified
-2. **Architecture:** Which code goes in notebooks (simulation loops, MQTT subscriptions)? Which goes in library (reusable classes, utilities, data models)?
-3. **Classes vs functions:** What should be modeled as a class? What's just a helper function?
-4. **Tests/Verification:** What commands should I run to verify this phase works
-5. **Investigation:** What should I understand/investigate before moving to the next phase
-6. **Dependencies:** Any new packages needed (e.g., jupyterlab, anymap-ts)
+1. **New files:** What notebooks or code files will be created/modified
+2. **Tests/Verification:** What commands should I run to verify this phase works
+3. **Investigation:** What should I understand/investigate before moving to the next phase
+4. **Dependencies:** Any new packages needed (e.g., jupyterlab, anymap-ts)
 
 Do NOT write any code or notebooks yet. Just describe the phases.
 
@@ -301,7 +268,6 @@ RULES from .github/copilot-instructions.md:
 
 ### Phase 2: Planning (PLAN Mode)
 - ❌ AI writes code → **Reject:** "You're in PLAN mode. Just describe the phases. I'll approve before implementation."
-- ❌ AI doesn't specify architecture → **Ask:** "Which notebooks? Which classes in src/simulated_city/? Notebook vs library code?"
 - ❌ AI skips a phase → **Ask:** "Can you add a phase for X?"
 - ❌ Phase descriptions are vague → **Reject:** "More specific. What files? What tests?"
 
