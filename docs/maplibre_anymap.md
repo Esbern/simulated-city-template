@@ -10,7 +10,7 @@ It is intentionally not a full anymap-ts manual — it focuses on the functions 
 ## Install
 
 ```bash
-pip install -e ".[notebooks]"
+python -m pip install -e ".[notebooks]"
 ```
 
 

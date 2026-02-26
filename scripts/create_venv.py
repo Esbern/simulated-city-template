@@ -42,23 +42,36 @@ def find_python_executables() -> dict[str, Tuple[int, int, int]]:
     
     Returns a dict mapping executable name to (major, minor, patch) version.
     """
-    candidates = []
     found = {}
     seen = set()
     
     # Windows: try py launcher first
     if sys.platform == "win32":
-        result = subprocess.run(
-            ["py", "-0p"],
-            capture_output=True,
-            text=True,
-        )
-        if result.returncode == 0:
-            for line in result.stdout.strip().split("\n"):
-                # Output format: "-3.13-64       C:\Python313\python.exe"
+        try:
+            result = subprocess.run(
+                ["py", "-0p"],
+                capture_output=True,
+                text=True,
+                timeout=3,
+            )
+        except FileNotFoundError:
+            result = None
+
+        if result and result.returncode == 0:
+            for line in result.stdout.splitlines():
+                # Example: "-3.13-64       C:\\Python313\\python.exe"
+                line = line.strip()
+                if not line:
+                    continue
                 parts = line.split()
-                if len(parts) >= 2:
-                    candidates.append(parts[-1])
+                if len(parts) < 2:
+                    continue
+                exe_path = parts[-1]
+                if exe_path and exe_path not in seen:
+                    version = get_python_version(exe_path)
+                    if version:
+                        found[exe_path] = version
+                        seen.add(exe_path)
     
     # Try common executable names directly first
     base_names = ["python", "python3"]
@@ -163,7 +176,7 @@ def main() -> int:
             check=False,
         )
         if result.returncode != 0:
-            print(f"Error: Failed to create virtual environment.")
+            print("Error: Failed to create virtual environment.")
             return 1
     except FileNotFoundError:
         print(f"Error: Could not find {selected_exe}")
@@ -173,13 +186,15 @@ def main() -> int:
     print(f"\n✓ Virtual environment created at {venv_path}")
     print("\nNext steps:")
     if sys.platform == "win32":
-        print(f"  1. Activate:  .\\{venv_path}\\Scripts\\Activate.ps1")
-        print(f"  2. Upgrade pip: python -m pip install -U pip")
-        print(f"  3. Install dependencies: pip install -e \".[dev,notebooks]\"")
+        venv_python = f".\\{venv_path}\\Scripts\\python.exe"
+        print(f"  1. Activate (optional):  .\\{venv_path}\\Scripts\\Activate.ps1")
+        print(f"  2. Upgrade pip: {venv_python} -m pip install -U pip")
+        print(f"  3. Install dependencies: {venv_python} -m pip install -e \".[dev,notebooks]\"")
     else:
-        print(f"  1. Activate:  source {venv_path}/bin/activate")
-        print(f"  2. Upgrade pip: python -m pip install -U pip")
-        print(f"  3. Install dependencies: pip install -e \".[dev,notebooks]\"")
+        venv_python = f"{venv_path}/bin/python"
+        print(f"  1. Activate (optional):  source {venv_path}/bin/activate")
+        print(f"  2. Upgrade pip: {venv_python} -m pip install -U pip")
+        print(f"  3. Install dependencies: {venv_python} -m pip install -e \".[dev,notebooks]\"")
     
     return 0
 

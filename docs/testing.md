@@ -142,7 +142,7 @@ To run tests in continuous integration:
 
 ```bash
 # Install dependencies (including dev/test packages)
-pip install -e ".[dev,notebooks]"
+python -m pip install -e ".[dev,notebooks]"
 
 # Run tests
 python -m pytest tests/ -v --tb=short
@@ -198,5 +198,5 @@ The test suite requires:
 These are installed with:
 
 ```bash
-pip install -e ".[dev]"
+python -m pip install -e ".[dev]"
 ```

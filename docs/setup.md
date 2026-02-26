@@ -2,7 +2,7 @@
 
 This project targets **Python 3.11+**.
 
-In practice, the smoothest experience is usually with Python **3.11–3.13**. Newer versions (for example Python 3.14 right after release) may work, but some third-party packages may not have prebuilt wheels available yet, which can cause `pip install` to fail.
+In practice, the smoothest experience is usually with Python **3.11–3.13**. Newer versions (for example Python 3.14 right after release) may work, but some third-party packages may not have prebuilt wheels available yet, which can cause installs (for example `python -m pip install ...`) to fail.
 
 The package metadata enforces this (`requires-python >= 3.11`), so installs will fail on older Python versions.
 
@@ -119,6 +119,8 @@ If you have multiple versions installed and want to see them:
 py -0p
 ```
 
+Note: `py -0p` requires the **Python Launcher for Windows** (`py`). If you do not have it installed (or it is not on your PATH), that command will fail. The helper script `python scripts/create_venv.py` still works in that case and falls back to discovering `python` executables via your PATH.
+
 If you do not have Python 3.11+, install it first (3.11–3.13 recommended if you hit package compatibility issues).
 
 If you get an execution policy error when activating, run this once:
@@ -127,12 +129,19 @@ If you get an execution policy error when activating, run this once:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
+If your machine blocks running `pip.exe` directly, install packages via the venv’s Python instead:
+
+```powershell
+\.\.venv\Scripts\python.exe -m pip install -U pip
+\.\.venv\Scripts\python.exe -m pip install -e ".[dev,notebooks]"
+```
+
 If you already created `.venv` with the wrong Python version, delete `.venv` and create it again with the correct interpreter.
 
 ## Install the library (editable) + workshop tools
 
 ```bash
-pip install -e ".[dev,notebooks]"
+python -m pip install -e ".[dev,notebooks]"
 ```
 
 ## Optional: geospatial transforms (CRS)
@@ -144,13 +153,13 @@ Geo helpers live in `simulated_city.geo` and include convenience functions like
 `wgs2utm(...)` / `utm2wgs(...)` plus the general `transform_xy(...)`.
 
 ```bash
-pip install -e ".[geo]"
+python -m pip install -e ".[geo]"
 ```
 
 Tip: for notebooks that include both mapping + CRS transforms, you can install both extras:
 
 ```bash
-pip install -e ".[notebooks,geo]"
+python -m pip install -e ".[notebooks,geo]"
 ```
 
 ## Set up a local MQTT broker (optional)
