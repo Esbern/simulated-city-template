@@ -104,6 +104,50 @@ Notes:
 - You must call `connect()` to start the connection process.
 - The network loop runs in a background thread.
 
+## Monitoring Messages with mosquitto_sub
+
+Use `mosquitto_sub` (part of the mosquitto command-line tools) to monitor messages published to your broker. This is useful for debugging and verifying that agents are publishing correctly.
+
+### Subscribe to a Specific Topic
+
+To monitor a specific topic (e.g., weather data):
+
+```bash
+mosquitto_sub -h localhost -t "simulated_city/weather/rain"
+```
+
+Replace `simulated_city/weather/rain` with any topic your agents publish to. Messages appear in real time as they arrive.
+
+### Monitor All Messages
+
+To subscribe to all messages on the broker, use the wildcard `#`:
+
+```bash
+mosquitto_sub -h localhost -t "#"
+```
+
+This displays every message published to any topic, which is helpful for seeing overall system activity.
+
+### Monitor with Topic Verbosity
+
+To see both the topic name and the message content clearly:
+
+```bash
+mosquitto_sub -h localhost -v -t "#"
+```
+
+The `-v` flag (verbose) prints the topic name before each message.
+
+### Remote Broker Monitoring
+
+If your broker is not on localhost, change the host:
+
+```bash
+mosquitto_sub -h broker.example.com -t "simulated_city/weather/rain"
+```
+
+For TLS-secured brokers, add `--cafile` or other TLS options as needed.
+
 ## Classes
 
 ### `MqttConnector`
@@ -173,4 +217,3 @@ Your code doesn't need to change—it automatically detects all active brokers v
 
 ## Using Other Brokers
 
-Projects can add custom brokers by editing `config.yaml` and adding them to the `profiles` section. See `notebooks/02_mqtt_intro/` for practical multi-broker examples.
