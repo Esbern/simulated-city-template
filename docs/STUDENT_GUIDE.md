@@ -4,66 +4,67 @@
 
 The workflow is the same whether you submit work via GitHub, folder snapshots, or in-person review. Check with your instructor which method your class uses.
 
-## The Workflow (3 Steps)
+## The Workflow (Documentation-First Development)
 
-### Step 1: Clarify (AI helps write docs, not code)
-Copy this prompt into your AI chat:
-```
-I want to build a simulated city based on this outline. 
-Please help me clarify it before I code.
+This workflow creates **reviewable documentation artifacts** before any code is written. Each artifact becomes part of your git history and can be reviewed by your instructor.
 
-[Paste your Project from README]
+### Step 1: Design Clarification → `docs/concepts.md`
 
-Please:
-1. Rewrite the 4 components using clear technical language
-2. Identify MQTT topics each agent will publish/subscribe to
-3. List configuration parameters (MQTT broker, locations, thresholds)
-4. Identify which notebooks to create (one per agent type)
-5. Identify what can be modeled as classes (vs simple functions)
-6. Suggest what belongs in library code (src/simulated_city/) vs notebooks
-7. Point out any ambiguities
+**Goal:** Create a clear design document that captures your project's architecture.
 
-Do NOT write code.
-```
+**Mode:** PLAN (AI writes documentation, not code)
 
-### Step 2: Plan (AI proposes phases, you approve)
-```
-Based on the design we just clarified:
-[Paste clarified design]
+Copy the prompt from [Template 1 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-1-design-clarification-docsconceptsmd). The AI will create a `docs/concepts.md` file containing:
+- Technical rewrite of your 4 components (Trigger, Observer, Control, Response)
+- MQTT topics (what each agent publishes/subscribes to)
+- Configuration parameters (broker settings, locations, thresholds)
+- Architecture decisions (notebook vs library code, classes vs functions)
+- List of notebooks to create (one per agent type)
 
-Please propose phased implementation:
-- Phase 1: Single basic agent
-- Phase 2: Add config file
-- Phase 3: Add MQTT publishing
-- Phase 4: Add second agent with MQTT subscription
-- Phase 5: Add dashboard
+**What you do:**
+1. Review `docs/concepts.md`
+2. Edit it if needed (you can ask AI to refine specific sections)
+3. Commit it to git before moving to Step 2
+4. Instructor reviews and approves the design
 
-For each phase, specify:
-1. **New files:** Which notebooks? Which library modules (src/simulated_city/)?
-2. **Classes vs functions:** What can be modeled as a class? What's just a helper function?
-3. **Notebook vs library:** What logic goes in notebooks (simulation loop, MQTT subscribe)? What goes in library (reusable utilities, data models)?
-4. **Tests/Verification:** What commands verify this phase works?
-5. **Investigation:** What should you understand before the next phase?
+### Step 2: Implementation Planning → `docs/implementationplan.md`
 
-Do NOT write code.
-```
+**Goal:** Create a phased implementation plan based on the approved design.
 
-### Step 3: Implement (ONE phase at a time)
-```
-Implement ONLY Phase 1:
-[Paste Phase 1]
+**Mode:** PLAN (AI writes documentation, not code)
 
-Rules (from .github/copilot-instructions.md):
-- Use anymap-ts (NOT folium)
-- Each notebook = ONE agent (NOT monolithic)
-- Load config via simulated_city.config.load_config()
-- Use mqtt.publish_json_checked() for publishing
-- Add all dependencies to pyproject.toml
+Copy the prompt from [Template 2 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-2-implementation-planning-docsimplementationplanmd). The AI will create a `docs/implementationplan.md` file containing:
+- Phase breakdown (Phase 1-5+)
+- Files to create/modify per phase
+- Tests/verification commands per phase
+- Dependencies needed
+- Investigation tasks between phases
 
-Only Phase 1. Do NOT jump to Phase 2.
-```
+**What you do:**
+1. Review `docs/implementationplan.md`
+2. Discuss with instructor if phases make sense
+3. Edit if needed
+4. Commit it to git before moving to Step 3
+5. Instructor approves the implementation plan
 
-After code: Test it, understand it, then ask for Phase 2.
+### Step 3+: Implement ONE Phase at a Time
+
+**Goal:** Write actual code for one approved phase.
+
+**Mode:** AGENT (AI writes code)
+
+Copy the prompt from [Template 3 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-3-phase-1-implementation-phase-3). The AI will:
+- Create notebooks and library code
+- Follow the phase description from `implementationplan.md`
+- Apply all rules from `.github/copilot-instructions.md`
+
+**What you do:**
+1. Test the code
+2. Run validation: `python scripts/verify_setup.py && python -m pytest`
+3. Commit and create PR
+4. After instructor approval, move to next phase
+
+**Key principle:** Each phase builds on the approved previous phase.
 
 ---
 
@@ -123,14 +124,20 @@ During planning (Step 2), the AI should identify which notebooks and which libra
 
 ## Common AI Mistakes (And How to Fix Them)
 
-### ❌ AI doesn't identify notebooks and library structure in planning
-You: "Before coding, tell me: which notebooks to create? Which classes go in src/simulated_city/? Which code is notebook-specific vs reusable?"
+### ❌ AI doesn't create documentation files
+You: "You're in PLAN mode. Create the docs/concepts.md file with all sections. Don't just describe it."
 
-### ❌ AI tries to code without clarifying design
-You: "No code yet. Use Phase 1 prompt from README.md to clarify the design first."
+### ❌ AI writes code when asked for documentation
+You: "You're in PLAN mode. Create docs/concepts.md markdown file, not code. No Python files yet."
 
-### ❌ AI proposes all 5 phases at once
-You: "We'll implement one at a time. Give me only Phase 1 implementation."
+### ❌ AI asks questions instead of creating concepts.md
+You: "You're in PLAN mode. Make reasonable assumptions and create the file. I'll edit it after."
+
+### ❌ AI tries to code without creating implementationplan.md first
+You: "We need docs/implementationplan.md first. Use Template 2 from PROMPT_TEMPLATES.md."
+
+### ❌ AI proposes all 5 phases in chat instead of a file
+You: "Create docs/implementationplan.md as a markdown file with proper sections for each phase."
 
 ### ❌ AI uses folium instead of anymap-ts
 You: "No, use anymap-ts. Check .github/copilot-instructions.md for the rules."
@@ -140,6 +147,9 @@ You: "Split into separate notebooks. Each agent publishes/subscribes via MQTT. S
 
 ### ❌ AI uses !pip install in notebook
 You: "Don't install in notebooks. Add to pyproject.toml and run: pip install -e '.[notebooks]'"
+
+### ❌ AI implements wrong phase
+You: "Implement only Phase [N] from docs/implementationplan.md. Stop there."
 
 ---
 
@@ -215,12 +225,12 @@ Each phase builds on the previous approved phase.
 Before you commit your Phase 1 work:
 
 - [ ] README filled in with 4-component template (your project idea)
-- [ ] AI clarified design (saved in your PR description or a doc)
-- [ ] You approved the implementation plan
+- [ ] **docs/concepts.md created and reviewed** ← Design clarification
+- [ ] **docs/implementationplan.md created and reviewed** ← Phased plan
 - [ ] **Only ONE phase implemented** ← Most important!
 - [ ] Tests passing: `python scripts/verify_setup.py && python -m pytest`
 - [ ] Structure valid: `python scripts/validate_structure.py`
-- [ ] PR description will say which phase(s) included (e.g., "Phase 1: Basic agent")
+- [ ] PR description references concepts.md and implementationplan.md
 
 ### Workflow: VS Code (with GitHub Desktop as alternative)
 
@@ -291,9 +301,10 @@ When you create the PR, use this template:
 
 Phase 1: Basic agent with MQTT
 
-## Design (from clarification phase)
+## Design Documents
 
-[Paste the design AI clarified for you]
+- [x] Design clarification: docs/concepts.md
+- [x] Implementation plan: docs/implementationplan.md
 
 ## What I Investigated
 

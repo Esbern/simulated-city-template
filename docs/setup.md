@@ -15,19 +15,19 @@ If you have multiple Python versions installed, you may accidentally create the 
 Use the Python helper script. It finds all Python versions on your system, lists them, and prompts you to choose one.
 
 ```bash
-python scripts/create_venv.py
+python3 scripts/create_venv.py
 ```
 
 If you want to skip the prompt and pin the version, pass `--version`:
 
 ```bash
-python scripts/create_venv.py --version 3.12
+python3 scripts/create_venv.py --version 3.12
 ```
 
 You can also pin to an exact patch version if it is installed:
 
 ```bash
-python scripts/create_venv.py --version 3.12.10
+python3 scripts/create_venv.py --version 3.12.10
 ```
 
 Always use `python -m pip` for installs. It is the most reliable and uniform option across platforms.

@@ -11,109 +11,176 @@ Copy-paste these into your AI chat. Don't modify them unless your instructor app
 ### Three Operating Modes
 
 1. **ASK MODE** - AI asks clarifying questions, validates assumptions, does NOT design or implement
-   - Use when: You have a vague idea and need help refining it
+   - Use when: You have a vague idea and need help refining it through conversation
    - AI behavior: Asks questions, points out gaps, does NOT propose solutions yet
+   - Output: Questions and clarifications (no files created)
 
-2. **PLAN MODE** - AI plans and designs, does NOT implement code
-   - Use when: Requirements are clear and you need a structured plan
-   - AI behavior: Proposes phases, describes files/tests, does NOT write code
+2. **PLAN MODE** - AI writes documentation (markdown files), does NOT implement code
+   - Use when: Requirements are clear and you need structured documentation
+   - AI behavior: Creates markdown files (concepts.md, implementationplan.md), does NOT write code
+   - Output: Documentation files that can be reviewed and versioned
+   - **Used in Steps 1 and 2 of the workflow**
 
-3. **AGENT MODE** - AI implements code based on approved plan
+3. **AGENT MODE** - AI implements code based on approved documentation
    - Use when: Design is approved and you're ready for one specific phase
    - AI behavior: Writes code, creates notebooks, implements exactly what was approved
+   - Output: Python files, notebooks, code
+   - **Used in Step 3+ of the workflow**
 
 ### Why This Matters
 
 Without explicit mode instructions, the AI may:
-- Write code when you only wanted clarification (wrong mode)
-- Ask questions when you're ready to implement (wrong mode)
+- Write code when you only wanted documentation (wrong mode)
+- Ask questions when you're ready to create documentation (wrong mode)
 - Implement multiple phases at once (wrong scope)
 
 **Solution:** Every prompt below starts with "MODE: [ASK/PLAN/AGENT]" — copy it exactly.
 
----
-
-## Template 1: Design Clarification (Phase 1)
-
-**Use this when:** You have a rough idea and want AI to clarify it.
+### Documentation-First Workflow
 
 ```
-MODE: ASK
-
-I want to build a simulated city based on this outline. 
-Please help me clarify it BEFORE I write any code.
-
-You are operating in ASK mode:
-- Ask clarifying questions
-- Validate my assumptions
-- Point out ambiguities
-- Do NOT design solutions yet
-- Do NOT write code
-
-## My Project
-[Copy the 4-component template from README.md and fill it in]
-
-Please:
-1. Rewrite the 4 components (Trigger, Observer, Control, Response) using clear technical language
-2. Identify the MQTT topics each agent will publish to and subscribe to
-3. List any configuration parameters (MQTT broker host/port, GPS coordinates, thresholds, etc.)
-4. Point out any ambiguities, missing details, or assumptions I've made
-5. Suggest realistic starting values for parameters (e.g., how many vehicles, pollution levels)
-
-Do NOT write any code. Just clarify the design.
-
-When you're done, I'll read your clarification and ask for an implementation plan.
+Step 1 (PLAN mode) → docs/concepts.md
+Step 2 (PLAN mode) → docs/implementationplan.md
+Step 3+ (AGENT mode) → Code (one phase at a time)
 ```
+
+Both documentation files are committed to git BEFORE any code is written.
 
 ---
 
-## Template 2: Implementation Planning (Phase 2)
+## Template 1: Design Clarification → `docs/concepts.md`
 
-**Use this when:** Design is clear and you're ready for a phased implementation plan.
+**Use this when:** You have a rough idea and want AI to create a design document.
 
 ```
 MODE: PLAN
 
-Great! Now that the design is clear, please propose a phased implementation plan.
+I want to build a simulated city. Please create a design document that clarifies the architecture BEFORE I write any code.
 
 You are operating in PLAN mode:
-- Describe phases and structure
-- List files, tests, dependencies
-- Do NOT write any code yet
-- Do NOT implement anything yet
+- Create a file: docs/concepts.md
+- Write structured documentation in markdown
+- Do NOT write any code
+- Do NOT ask me questions (make reasonable assumptions)
 
-## Clarified Design
-[Paste the clarified design from Template 1 response]
+## My Project Idea
+[Copy the 4-component template from README.md and fill it in]
 
-Please propose a phased implementation (5-6 phases):
-- Phase 1: Minimal working example (one agent, basic logic)
-- Phase 2: Add configuration file (config.yaml)
-- Phase 3: Add MQTT publishing
-- Phase 4: Add second agent with MQTT subscription
-- Phase 5: Add dashboard visualization
-- Phase 6: [Any additional phases needed]
+Please create docs/concepts.md with these sections:
 
-For EACH phase, provide:
-1. **New files:** What notebooks or code files will be created/modified
-2. **Tests/Verification:** What commands should I run to verify this phase works
-3. **Investigation:** What should I understand/investigate before moving to the next phase
-4. **Dependencies:** Any new packages needed (e.g., jupyterlab, anymap-ts)
+### 1. System Overview
+Rewrite my 4 components (Trigger, Observer, Control, Response) using clear technical language.
 
-Do NOT write any code or notebooks yet. Just describe the phases.
+### 2. MQTT Architecture
+- List all MQTT topics
+- For each topic, specify:
+  * Which agent publishes to it
+  * Which agents subscribe to it
+  * Message schema (JSON structure)
 
-When you're done, I'll review the plan and ask for Phase 1 implementation.
+### 3. Configuration Parameters
+List all parameters that should go in config.yaml:
+- MQTT broker settings (host, port, username, password)
+- GPS coordinates (if applicable)
+- Thresholds and limits
+- Timing parameters
+- Suggest realistic default values
+
+### 4. Architecture Decisions
+
+#### Notebooks to Create
+List each notebook file and its purpose (one notebook per agent).
+
+#### Library Code (src/simulated_city/)
+Identify reusable components that should go in library code:
+- Data models (dataclasses)
+- Utility functions
+- Calculation helpers
+
+#### Classes vs Functions
+- What should be modeled as classes (agents with state, data models)
+- What should be simple functions (calculations, transformations)
+
+### 5. Open Questions
+List any ambiguities or assumptions you made that I should validate.
+
+---
+
+Create the docs/concepts.md file now. Use markdown formatting with proper headings and bullet points.
+
+When you're done, I'll review and edit it before moving to the implementation plan.
 ```
 
 ---
 
-## Template 3: Phase 1 Implementation (Phase 3)
+## Template 2: Implementation Planning → `docs/implementationplan.md`
 
-**Use this when:** You've approved the implementation plan and are ready for Phase 1 code.
+**Use this when:** Design (concepts.md) is approved and you're ready for a phased implementation plan.
+
+```
+MODE: PLAN
+
+Great! The design in docs/concepts.md is approved. Now please create an implementation plan.
+
+You are operating in PLAN mode:
+- Create a file: docs/implementationplan.md
+- Describe phases and structure
+- Do NOT write any code yet
+- Do NOT implement anything yet
+
+Please create docs/implementationplan.md based on the approved design:
+[Attach or reference docs/concepts.md]
+
+Structure the plan with these phases:
+- Phase 1: Minimal working example (one agent, basic logic, no MQTT yet)
+- Phase 2: Add configuration file (config.yaml with MQTT and simulation parameters)
+- Phase 3: Add MQTT publishing (agent publishes to topics)
+- Phase 4: Add second agent with MQTT subscription (agents communicate)
+- Phase 5: Add dashboard visualization (anymap-ts)
+- Phase 6+: [Additional phases if needed]
+
+For EACH phase, provide:
+
+### Phase X: [Title]
+
+**Goal:** [One sentence describing what this phase achieves]
+
+**New Files:**
+- List files to create or modify
+- Specify whether it's a notebook, library module, or config file
+
+**Implementation Details:**
+- Key classes or functions to implement
+- MQTT topics involved (if applicable)
+- Configuration parameters needed
+
+**Dependencies:**
+- Any new packages to add to pyproject.toml
+
+**Verification:**
+- Commands to run: `python scripts/verify_setup.py`, `python -m pytest`, etc.
+- What to test manually (e.g., "Open notebook, run cells, check output")
+
+**Investigation:**
+- What should I understand or explore before moving to the next phase?
+
+---
+
+Create the docs/implementationplan.md file now. Use markdown with clear phase headings.
+
+When you're done, I'll review it with my instructor before starting Phase 1 implementation.
+```
+
+---
+
+## Template 3: Phase 1 Implementation (Step 3+)
+
+**Use this when:** You've approved docs/implementationplan.md and are ready for Phase 1 code.
 
 ```
 MODE: AGENT
 
-Good! I approve the plan. Now implement ONLY Phase 1:
+Good! I approve the implementation plan. Now implement ONLY Phase 1:
 
 You are operating in AGENT mode:
 - Write code and create files
@@ -122,8 +189,8 @@ You are operating in AGENT mode:
 - Do NOT plan other phases
 - Do NOT jump ahead to Phase 2+
 
-## Phase 1 (from the approved plan)
-[Paste only the Phase 1 description from the plan]
+## Phase 1 (from docs/implementationplan.md)
+[Copy and paste ONLY the Phase 1 section from docs/implementationplan.md]
 
 ## Rules (from .github/copilot-instructions.md)
 These are non-negotiable:
@@ -157,26 +224,26 @@ Create a new cell with the code, or create a new notebook file. Include comments
 ```
 MODE: AGENT
 
-Good! Phase 1 works. Now implement ONLY Phase 2:
+Good! Phase [N] works. Now implement ONLY Phase [N+1]:
 
 You are operating in AGENT mode:
-- Write code for Phase 2 only
-- Do NOT modify Phase 1 unless necessary
+- Write code for Phase [N+1] only
+- Do NOT modify previous phase code unless necessary
 - Do NOT ask permission
-- Do NOT jump to Phase 3+
+- Do NOT jump to Phase [N+2]+
 
-## Phase 2 (from the approved plan)
-[Paste only the Phase 2 description from the plan]
+## Phase [N+1] (from docs/implementationplan.md)
+[Copy and paste ONLY the Phase N+1 section from docs/implementationplan.md]
 
-## Phase 1 Artifacts
-These were created in Phase 1:
-[List the notebooks/files created - e.g., notebooks/agent_transport.ipynb]
+## Previous Phase Artifacts
+These were created in previous phases:
+[List the notebooks/files created - e.g., notebooks/agent_transport.ipynb, config.yaml]
 
-Do NOT modify Phase 1 code unless absolutely necessary.
+Do NOT modify previous phase code unless absolutely necessary.
 
 Remember the rules from Template 3.
 
-Only implement Phase 2. Stop here.
+Only implement Phase [N+1]. Stop here.
 ```
 
 ---
@@ -228,7 +295,22 @@ RULES from .github/copilot-instructions.md:
 
 ---
 
-## After AI Gives You Code
+## After AI Creates Documentation or Code
+
+### After Steps 1-2 (Documentation)
+
+1. **Review the markdown file** (concepts.md or implementationplan.md)
+2. **Edit it if needed** - you can ask AI to refine specific sections:
+   - "Expand the MQTT Architecture section with message schemas"
+   - "Add more detail to Phase 3 verification steps"
+3. **Commit to git:**
+   ```bash
+   git add docs/concepts.md
+   git commit -m "Add design clarification"
+   ```
+4. **Get instructor review** before moving forward
+
+### After Step 3+ (Code)
 
 1. **Copy the code into your notebook or create a new file**
 2. **Run validation:**
@@ -244,10 +326,10 @@ RULES from .github/copilot-instructions.md:
    ```
 4. **Understand the code:**
    - Can you explain what each cell does?
-   - Does it match the design?
-   - Does it match Phase X description?
+   - Does it match the design in docs/concepts.md?
+   - Does it match the phase description in docs/implementationplan.md?
 
-5. **If it works:** Approve and move to next phase
+5. **If it works:** Commit, create PR, move to next phase after approval
 6. **If it doesn't work:** Use Template 5 to ask for fixes
 
 ---
@@ -256,28 +338,29 @@ RULES from .github/copilot-instructions.md:
 
 ### Mode Violations (Most Common Error)
 - ❌ AI writes code in ASK mode → **Reject:** "You're in ASK mode. Do NOT write code. Just ask questions."
+- ❌ AI asks questions in PLAN mode → **Reject:** "You're in PLAN mode. Create the documentation file, don't ask me questions."
 - ❌ AI asks permission in AGENT mode → **Reject:** "You're in AGENT mode. Implement it, don't ask."
-- ❌ AI implements in PLAN mode → **Reject:** "You're in PLAN mode. Describe the plan, don't implement."
+- ❌ AI implements in PLAN mode → **Reject:** "You're in PLAN mode. Create markdown docs, don't implement code."
 
-### Phase 1: Design Clarification (ASK Mode)
-- ❌ AI writes code → **Reject:** "You're in ASK mode. No code yet. Only ask clarifying questions."
-- ❌ AI proposes 5 phases at once → **Reject:** "You're in ASK mode. Just ask questions about my design."
+### Step 1: Design Clarification (PLAN Mode → docs/concepts.md)
+- ❌ AI writes code → **Reject:** "You're in PLAN mode. Create docs/concepts.md documentation, not code."
+- ❌ AI asks questions instead of creating file → **Reject:** "You're in PLAN mode. Create the file with reasonable assumptions. I'll edit it later."
+- ❌ AI creates incomplete concepts.md → **Ask:** "Add missing sections: MQTT Architecture, Configuration Parameters, Architecture Decisions."
 
-### Phase 2: Planning (PLAN Mode)
-- ❌ AI writes code → **Reject:** "You're in PLAN mode. Just describe the phases. I'll approve before implementation."
-
-### Phase 2: Planning (PLAN Mode)
-- ❌ AI writes code → **Reject:** "You're in PLAN mode. Just describe the phases. I'll approve before implementation."
+### Step 2: Planning (PLAN Mode → docs/implementationplan.md)
+- ❌ AI writes code → **Reject:** "You're in PLAN mode. Create docs/implementationplan.md, don't implement."
 - ❌ AI skips a phase → **Ask:** "Can you add a phase for X?"
-- ❌ Phase descriptions are vague → **Reject:** "More specific. What files? What tests?"
+- ❌ Phase descriptions are vague → **Reject:** "More specific. What files? What tests? What verification commands?"
+- ❌ AI doesn't reference concepts.md → **Reject:** "Base the plan on the approved design in docs/concepts.md."
 
-### Phase 3+: Implementation (AGENT Mode)
+### Step 3+: Implementation (AGENT Mode)
 - ❌ AI asks "Should I implement this?" → **Reject:** "You're in AGENT mode. Implement it now."
 - ❌ AI uses folium → **Reject:** "Use anymap-ts. Rewrite it."
 - ❌ AI creates one giant notebook → **Reject:** "Split this into separate agent notebooks."
 - ❌ AI suggests `!pip install` → **Reject:** "Add to pyproject.toml instead."
 - ❌ AI hardcodes MQTT settings → **Reject:** "Use config.yaml and config.load_config()."
-- ❌ AI implements Phase 2 when asked for Phase 1 → **Reject:** "Only Phase 1. Stop here."
+- ❌ AI implements Phase 2 when asked for Phase 1 → **Reject:** "Only Phase 1 from docs/implementationplan.md. Stop here."
+- ❌ AI deviates from implementationplan.md → **Reject:** "Follow the approved plan in docs/implementationplan.md exactly."
 
 ---
 
