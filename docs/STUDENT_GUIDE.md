@@ -49,17 +49,6 @@ cd ..
 4. Right-click → "Save As..." → Save to your `docs/` folder
 5. Repeat for `PROMPT_TEMPLATES.md`
 
-### After Updating
-
-After downloading the updated files, you may want to commit them to your repository:
-
-```bash
-git add docs/STUDENT_GUIDE.md docs/PROMPT_TEMPLATES.md
-git commit -m "Update documentation guides from instructor"
-git push
-```
-
-**Tip:** Ask your instructor to announce when these files are updated so you know when to refresh them.
 
 ---
 
@@ -459,36 +448,12 @@ Ran these commands successfully:
 - [x] **Validated implementation matches documentation** (used Template 5.5 validation)
 - [x] All expected outputs match the runtime documentation
 - [x] Fixed any mismatches between code and documentation
-```
-
-### After Your Instructor Reviews
-
-Your instructor will:
-1. Look at your Phase 1 code
-2. Run validation scripts
-3. Either approve or ask for changes
-
-**If approved:**
-1. Instructor clicks "Merge pull request" on GitHub.com
-2. Your Phase 1 code is now in the main branch ✅
-3. **You** can now start Phase 2:
-   ```
-   1. In VS Code, switch to main branch (click branch name bottom left)
-   2. Click the ↻ sync icon to pull the updated main
-   3. Create a new branch: phase-2 (click branch name → "+ Create new branch")
-   4. Start implementing Phase 2
-   ```
-
-**If changes needed:**
-1. Fix them in VS Code (stay on the phase-1 branch)
-2. Commit again
-3. Sync
-4. The PR updates automatically
-5. Instructor re-reviews
+`
 
 ---
 
 ### Quick Reference: VS Code Source Control
+
 
 | Action | How to Do It |
 |--------|--------------|
@@ -498,6 +463,7 @@ Your instructor will:
 | **Sync** | Click "Sync Changes" or ↻ icon (bottom left) |
 | **Switch branch** | Click branch name (bottom left) → select branch |
 | **Create branch** | Click branch name → "+ Create new branch" |
+
 
 **Alternatively:** You can use GitHub Desktop for all Git operations if you prefer a visual interface. The workflow is the same (create branch → commit → sync → PR).
 

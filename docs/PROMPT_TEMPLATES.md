@@ -39,8 +39,8 @@ Without explicit mode instructions, the AI may:
 ### Documentation-First Workflow
 
 ```
-Step 1 (PLAN mode) → docs/concepts.md
-Step 2 (PLAN mode) → docs/implementationplan.md
+Step 1 (Agent mode) → docs/concepts.md
+Step 2 (PLAN/agent mode) → docs/implementationplan.md
 Step 3+ (AGENT mode) → Code (one phase at a time)
 ```
 
@@ -226,14 +226,13 @@ This file must include:
 
 ### 2. How to Run
 Provide step-by-step workflows:
-```
+
 1. Start notebook X
 2. Run cells 1-3
 3. Observe output: [describe expected output]
 4. Start notebook Y
 5. Run cells 1-2
 6. Observe in notebook X: [describe expected change]
-```
 
 ### 3. Expected Output
 For each key cell in each notebook, document:
