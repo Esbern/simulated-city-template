@@ -383,6 +383,107 @@ Make it a habit, not an afterthought.
 
 ---
 
+## Distributing Documentation Updates to Students
+
+As you refine the workshop, you may update `STUDENT_GUIDE.md` or `PROMPT_TEMPLATES.md` to clarify instructions or add examples.
+
+### How to Share Updates
+
+**Template Repository:** https://github.com/Esbern/simulated-city-template
+
+If you **forked** the template to your own GitHub account, students will download updates from your fork.
+
+If you use the **original template unchanged**, students download from `Esbern/simulated-city-template`.
+
+#### Option A: You Forked the Template (Most Flexible)
+
+Students download from your fork:
+```bash
+curl -O https://raw.githubusercontent.com/YOUR-GITHUB-USERNAME/simulated-city-template/main/docs/STUDENT_GUIDE.md
+```
+
+Tell students: **"Use your instructor username: [YOUR-GITHUB-USERNAME]"**
+
+#### Option B: Using the Original Template
+
+Students download from the original:
+```bash
+curl -O https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/STUDENT_GUIDE.md
+```
+
+Tell students: **"Use the original template repository (Esbern)"**
+
+### Workflow for Distributing Updates
+
+1. **Decide your approach:**
+   - **Forked:** Updates go to your fork at `github.com/YOUR-USERNAME/simulated-city-template`
+   - **Original:** Tell students to download from `https://github.com/Esbern/simulated-city-template`
+
+2. **Make changes** to STUDENT_GUIDE.md or PROMPT_TEMPLATES.md
+3. **Commit and push** to the `main` branch (your fork or contribute to original)
+4. **Announce to class**: 
+   - If you forked: "I've updated the documentation. Download using your instructor username: [YOUR-USERNAME]"
+   - If original: "I've updated the documentation. Download from the original template: https://github.com/Esbern/simulated-city-template"
+5. **Provide the download commands** from [UPDATING.md](UPDATING.md)
+
+### What Files Should Students Update This Way?
+
+**Update via download:**
+- `docs/STUDENT_GUIDE.md` — Workflow and instructions
+- `docs/PROMPT_TEMPLATES.md` — AI prompts and templates
+- `docs/exercises.md` — Example exercises (if you add more)
+- `.github/copilot-instructions.md` — AI rules (if you change requirements)
+
+**Do NOT overwrite (students create these):**
+- `docs/concepts.md` — Student's design clarification
+- `docs/implementationplan.md` — Student's phased plan
+- `docs/phase_*_runtime.md` — Student's runtime documentation
+- `README.md` — Student's project description
+- `config.yaml` — Student's configuration
+- Notebooks and code
+
+### Best Practice
+
+Create a class announcement template:
+
+**If you forked the template:**
+```
+📢 Documentation Update Available
+
+I've updated the workshop documentation guides with [brief description of changes].
+
+Download the latest version:
+Your instructor GitHub username: [YOUR-GITHUB-USERNAME]
+
+Follow the instructions in docs/UPDATING.md or docs/STUDENT_GUIDE.md
+
+This will update:
+- STUDENT_GUIDE.md
+- PROMPT_TEMPLATES.md
+
+Your project files (concepts.md, notebooks, code) will not be affected.
+```
+
+**If using the original template:**
+```
+📢 Documentation Update Available
+
+I've updated the workshop documentation guides with [brief description of changes].
+
+Download the latest version from the original template repository:
+https://github.com/Esbern/simulated-city-template
+
+Follow the instructions in docs/UPDATING.md or docs/STUDENT_GUIDE.md
+
+This will update:
+- STUDENT_GUIDE.md
+- PROMPT_TEMPLATES.md
+
+Your project files (concepts.md, notebooks, code) will not be affected.
+```
+
+---
+
 ## Advanced: Teaching Students to Compare Models
 
 Once students master the workflow, have them try:

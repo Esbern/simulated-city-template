@@ -4,6 +4,74 @@
 
 The workflow is the same whether you submit work via GitHub, folder snapshots, or in-person review. Check with your instructor which method your class uses.
 
+## Updating This Guide (If Your Instructor Updates It)
+
+If your instructor updates `STUDENT_GUIDE.md` or `PROMPT_TEMPLATES.md`, you can download just those files without re-cloning your entire repository.
+
+**Quick reference:** See [UPDATING.md](UPDATING.md) for copy-paste commands.
+
+The template repository is: https://github.com/Esbern/simulated-city-template
+
+
+
+### Option 1: Using Terminal (macOS / Linux / Git Bash on Windows)
+
+```bash
+# From your repository root directory
+cd docs
+
+# If your instructor provided their GitHub username:
+curl -O https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/STUDENT_GUIDE.md
+curl -O https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/PROMPT_TEMPLATES.md
+
+# OR if using the original Esbern template:
+curl -O https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/STUDENT_GUIDE.md
+curl -O https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/PROMPT_TEMPLATES.md
+
+# Go back to repository root
+cd ..
+```
+
+### Option 2: Using PowerShell (Windows)
+
+```powershell
+# From your repository root directory
+cd docs
+
+# If your instructor provided their GitHub username:
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/STUDENT_GUIDE.md" -OutFile "STUDENT_GUIDE.md"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/PROMPT_TEMPLATES.md" -OutFile "PROMPT_TEMPLATES.md"
+
+# OR if using the original Esbern template:
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/STUDENT_GUIDE.md" -OutFile "STUDENT_GUIDE.md"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/PROMPT_TEMPLATES.md" -OutFile "PROMPT_TEMPLATES.md"
+
+# Go back to repository root
+cd ..
+```
+
+### Option 3: Manual Download (Any Platform)
+
+1. Go to **your instructor's repository** on GitHub.com (or the original: https://github.com/Esbern/simulated-city-template)
+2. Navigate to `docs/STUDENT_GUIDE.md`
+3. Click the "Raw" button
+4. Right-click → "Save As..." → Save to your `docs/` folder
+5. Repeat for `PROMPT_TEMPLATES.md`
+
+### After Updating
+
+After downloading the updated files, you may want to commit them to your repository:
+
+```bash
+git add docs/STUDENT_GUIDE.md docs/PROMPT_TEMPLATES.md
+git commit -m "Update documentation guides from instructor"
+git push
+```
+
+**Tip:** Ask your instructor to announce when these files are updated so you know when to refresh them.
+
+---
+
 ## The Workflow (Documentation-First Development)
 
 This workflow creates **reviewable documentation artifacts** before any code is written. Each artifact becomes part of your git history and can be reviewed by your instructor.
