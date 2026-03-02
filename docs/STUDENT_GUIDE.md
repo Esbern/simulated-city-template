@@ -20,11 +20,6 @@ The template repository is: https://github.com/Esbern/simulated-city-template
 # From your repository root directory
 cd docs
 
-# If your instructor provided their GitHub username:
-curl -O https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/STUDENT_GUIDE.md
-curl -O https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/PROMPT_TEMPLATES.md
-
-# OR if using the original Esbern template:
 curl -O https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/STUDENT_GUIDE.md
 curl -O https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/PROMPT_TEMPLATES.md
 
@@ -38,11 +33,7 @@ cd ..
 # From your repository root directory
 cd docs
 
-# If your instructor provided their GitHub username:
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/STUDENT_GUIDE.md" -OutFile "STUDENT_GUIDE.md"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/INSTRUCTOR-USERNAME/simulated-city-template/main/docs/PROMPT_TEMPLATES.md" -OutFile "PROMPT_TEMPLATES.md"
 
-# OR if using the original Esbern template:
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/STUDENT_GUIDE.md" -OutFile "STUDENT_GUIDE.md"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Esbern/simulated-city-template/main/docs/PROMPT_TEMPLATES.md" -OutFile "PROMPT_TEMPLATES.md"
 
@@ -109,6 +100,7 @@ Step 4 (AGENT mode) → Code + docs/phase_2_runtime.md
 **Mode:** PLAN (AI writes documentation, not code)
 
 Copy the prompt from [Template 1 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-1-design-clarification-docsconceptsmd). The AI will create a `docs/concepts.md` file containing:
+
 - Technical rewrite of your 4 components (Trigger, Observer, Control, Response)
 - MQTT topics (what each agent publishes/subscribes to)
 - Configuration parameters (broker settings, locations, thresholds)
@@ -116,6 +108,7 @@ Copy the prompt from [Template 1 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#tem
 - List of notebooks to create (one per agent type)
 
 **What you do:**
+
 1. Review `docs/concepts.md`
 2. Edit it if needed (you can ask AI to refine specific sections)
 3. Commit it to git before moving to Step 2
@@ -128,6 +121,7 @@ Copy the prompt from [Template 1 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#tem
 **Mode:** PLAN (AI writes documentation, not code)
 
 Copy the prompt from [Template 2 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-2-implementation-planning-docsimplementationplanmd). The AI will create a `docs/implementationplan.md` file containing:
+
 - Phase breakdown (Phase 1-5+)
 - Files to create/modify per phase
 - Tests/verification commands per phase
@@ -135,6 +129,7 @@ Copy the prompt from [Template 2 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#tem
 - Investigation tasks between phases
 
 **What you do:**
+
 1. Review `docs/implementationplan.md`
 2. Discuss with instructor if phases make sense
 3. Edit if needed
@@ -148,12 +143,14 @@ Copy the prompt from [Template 2 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#tem
 **Mode:** AGENT (AI writes code and documentation)
 
 Copy the prompt from [Template 3 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-3-phase-1-implementation-phase-3). The AI will:
+
 - Create notebooks and library code
 - Create runtime documentation (e.g., `docs/phase_1_runtime.md`)
 - Follow the phase description from `implementationplan.md`
 - Apply all rules from `.github/copilot-instructions.md`
 
 **What you do:**
+
 1. **Review the runtime documentation** - Understand expected outputs and workflows
 2. **Test the code** - Follow the workflows in the runtime doc
 3. **Run validation**: `python scripts/verify_setup.py && python -m pytest`
@@ -197,6 +194,7 @@ One of the most important decisions in Phase 1-2 is **where code should live**:
 **Why:** Library code is for reusable, testable components.
 
 ### Classes vs Functions
+
 - **Classes:** For agents with state, data models (Vehicle, Sensor), services
 - **Functions:** For simple helpers, transformations, one-off calculations
 
@@ -221,6 +219,7 @@ notebooks/
 ```
 
 During planning (Step 2), the AI should identify which notebooks and which library modules to create. This makes your code:
+
 - Testable (library code can be tested with pytest)
 - Reusable (multiple notebooks can import the same classes)
 - Maintainable (each notebook has a clear purpose)
@@ -230,39 +229,51 @@ During planning (Step 2), the AI should identify which notebooks and which libra
 ## Common AI Mistakes (And How to Fix Them)
 
 ### ❌ AI doesn't create documentation files
+
 You: "You're in PLAN mode. Create the docs/concepts.md file with all sections. Don't just describe it."
 
 ### ❌ AI writes code when asked for documentation
+
 You: "You're in PLAN mode. Create docs/concepts.md markdown file, not code. No Python files yet."
 
 ### ❌ AI asks questions instead of creating concepts.md
+
 You: "You're in PLAN mode. Make reasonable assumptions and create the file. I'll edit it after."
 
 ### ❌ AI tries to code without creating implementationplan.md first
+
 You: "We need docs/implementationplan.md first. Use Template 2 from PROMPT_TEMPLATES.md."
 
 ### ❌ AI proposes all 5 phases in chat instead of a file
+
 You: "Create docs/implementationplan.md as a markdown file with proper sections for each phase."
 
 ### ❌ AI uses folium instead of anymap-ts
+
 You: "No, use anymap-ts. Check .github/copilot-instructions.md for the rules."
 
 ### ❌ AI creates one big notebook instead of agent notebooks
+
 You: "Split into separate notebooks. Each agent publishes/subscribes via MQTT. See docs/exercises.md."
 
 ### ❌ AI uses !pip install in notebook
+
 You: "Don't install in notebooks. Add to pyproject.toml and run: pip install -e '.[notebooks]'"
 
 ### ❌ AI implements wrong phase
+
 You: "Implement only Phase [N] from docs/implementationplan.md. Stop there."
 
 ### ❌ AI creates vague expected outputs in runtime doc
+
 You: "Be specific. Don't say 'prints message' - say 'prints: Connected to MQTT broker at localhost:1883'"
 
 ### ❌ Implementation doesn't match runtime documentation
+
 You: "I tested using Template 5.5 validation. Here's my report: [paste validation report]. Fix the alignment."
 
 ### ❌ AI skips runtime documentation
+
 You: "You must create docs/phase_N_runtime.md with specific expected outputs, workflows, and debugging guidance."
 
 ---
