@@ -184,6 +184,7 @@ Good! I approve the implementation plan. Now implement ONLY Phase 1:
 
 You are operating in AGENT mode:
 - Write code and create files
+- Create runtime documentation
 - Implement only what's described in Phase 1
 - Do NOT ask permission
 - Do NOT plan other phases
@@ -210,9 +211,109 @@ DO NOT:
 - Hardcode MQTT settings or coordinates
 - Suggest !pip install inside the notebook code
 
+## Documentation Requirement
+
+**CRITICAL:** After implementing the code, create a runtime documentation file: `docs/phase_1_runtime.md`
+
+This documentation will be used by the human to validate that your implementation works correctly. Write it clearly and precisely.
+
+This file must include:
+
+### 1. What Was Created
+- List all notebooks/scripts created
+- List any library modules added to src/simulated_city/
+- List configuration changes (config.yaml entries)
+
+### 2. How to Run
+Provide step-by-step workflows:
+```
+1. Start notebook X
+2. Run cells 1-3
+3. Observe output: [describe expected output]
+4. Start notebook Y
+5. Run cells 1-2
+6. Observe in notebook X: [describe expected change]
+```
+
+### 3. Expected Output
+For each key cell in each notebook, document:
+- Cell number and purpose
+- **Exact expected output** (specific text, values, message formats)
+- **Be specific**: Don't say "prints connection info" - say "prints: 'Connected to MQTT broker at localhost:1883'"
+- What it means if output is different
+- How to verify success vs failure
+
+### 4. MQTT Topics (if applicable)
+List:
+- Topics published to (which notebook, what data)
+- Topics subscribed to (which notebook, what handler)
+- Message schemas (JSON structure)
+
+### 5. Debugging Guidance
+- How to enable verbose mode or increase log level
+- Common errors and solutions
+- How to verify MQTT messages are flowing
+- Troubleshooting steps
+
+### 6. Verification Commands
+```bash
+python scripts/verify_setup.py
+python scripts/validate_structure.py
+python -m pytest
+```
+
+---
+
+## MQTT Debugging (Optional but Recommended)
+
+If this phase uses MQTT, also create: `notebooks/mqtt_monitor.ipynb`
+
+This notebook should:
+- Subscribe to ALL topics using `#` wildcard
+- Print every message received with timestamp
+- Use for debugging message flow between agents
+
+Structure:
+```python
+import paho.mqtt.client as mqtt
+from simulated_city.config import load_config
+from simulated_city.mqtt import connect_mqtt
+import json
+from datetime import datetime
+
+# Load config
+config = load_config()
+
+# Callback: print all messages
+def on_message(client, userdata, message):
+    timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+    try:
+        payload = json.loads(message.payload.decode())
+        print(f"[{timestamp}] {message.topic}")
+        print(f"  {json.dumps(payload, indent=2)}")
+    except:
+        print(f"[{timestamp}] {message.topic}: {message.payload.decode()}")
+
+# Connect and subscribe to everything
+client = connect_mqtt(config.mqtt)
+client.on_message = on_message
+client.subscribe(f"{config.mqtt.base_topic}/#")
+print(f"Monitoring all topics under {config.mqtt.base_topic}/#")
+print("Press 'interrupt kernel' to stop\n")
+
+client.loop_forever()
+```
+
+---
+
 Only implement Phase 1. Stop here.
 
-Create a new cell with the code, or create a new notebook file. Include comments.
+Create:
+1. The code (notebooks, library files, config changes)
+2. The runtime documentation (docs/phase_1_runtime.md) with **specific, testable expected outputs**
+3. Optional: MQTT monitor notebook (if phase uses MQTT)
+
+**After you create these files, the human will validate that the implementation matches the runtime documentation using Template 5.5. Be precise in your expected outputs.**
 ```
 
 ---
@@ -228,6 +329,7 @@ Good! Phase [N] works. Now implement ONLY Phase [N+1]:
 
 You are operating in AGENT mode:
 - Write code for Phase [N+1] only
+- Create/update runtime documentation for this phase
 - Do NOT modify previous phase code unless necessary
 - Do NOT ask permission
 - Do NOT jump to Phase [N+2]+
@@ -243,7 +345,23 @@ Do NOT modify previous phase code unless absolutely necessary.
 
 Remember the rules from Template 3.
 
+## Documentation Requirement
+
+Create or update: `docs/phase_[N+1]_runtime.md`
+
+Include the same sections as Template 3:
+1. What Was Created (new files in this phase)
+2. How to Run (workflows including previous phase notebooks)
+3. Expected Output (for new cells/notebooks)
+4. MQTT Topics (if changed/added)
+5. Debugging Guidance
+6. Verification Commands
+
 Only implement Phase [N+1]. Stop here.
+
+Create:
+1. The code (notebooks, library files, config changes)
+2. The runtime documentation (docs/phase_[N+1]_runtime.md)
 ```
 
 ---
@@ -272,6 +390,97 @@ Remember:
 
 ---
 
+## Template 5.5: Phase Validation and Alignment
+
+**Use this when:** You've implemented a phase and tested it, but the actual behavior doesn't match what the runtime documentation says should happen.
+
+**Critical workflow principle:** Do NOT move to the next phase until the human validates that implementation matches documentation. If there's a mismatch, document it and have the AI fix the alignment.
+
+### Step A: Human Validation (You do this)
+
+1. **Read the runtime documentation**: Open `docs/phase_N_runtime.md`
+2. **Follow the workflows exactly**: Do exactly what "How to Run" says
+3. **Compare actual vs expected**: For each workflow step, document what happened:
+
+```
+Validation Report for Phase [N]:
+
+Workflow 1: [Description from runtime doc]
+- Expected: [Copy from runtime doc]
+- Actual: [What you actually observed]
+- Match: ✅ / ❌
+
+Workflow 2: [Description from runtime doc]
+- Expected: [Copy from runtime doc]
+- Actual: [What you actually observed]
+- Match: ✅ / ❌
+
+Cell outputs:
+- Notebook X, Cell 3:
+  - Expected: "Connected to MQTT broker"
+  - Actual: "Connection timeout after 5s"
+  - Match: ❌
+
+- Notebook X, Cell 5:
+  - Expected: Published to "city/transport/vehicles"
+  - Actual: Published to "city/transport/vehicles"
+  - Match: ✅
+```
+
+4. **If everything matches**: Move to next phase
+5. **If something doesn't match**: Use Template 5.5B below
+
+### Step B: AI Alignment Fix (Use this prompt)
+
+**Use this when:** Validation report shows mismatches between documentation and actual behavior.
+
+```
+MODE: AGENT
+
+I tested Phase [N] following the runtime documentation (docs/phase_N_runtime.md).
+The implementation does not match the documentation.
+
+You are operating in AGENT mode:
+- Read docs/phase_N_runtime.md carefully
+- Compare with my validation report below
+- Fix EITHER the code OR the documentation to align them
+- Verify alignment by explaining what should happen
+- Do NOT move to other phases
+
+## My Validation Report
+
+[Paste your validation report from Step A above]
+
+## Your Task
+
+For each mismatch:
+1. Analyze whether the code is wrong or the documentation is wrong
+2. If code is wrong: Fix the code to match the documentation
+3. If documentation is wrong: Update docs/phase_N_runtime.md to match actual behavior
+4. Explain why you chose to fix code vs documentation
+
+## Verification Requirement
+
+After making changes, provide an updated section of docs/phase_N_runtime.md showing:
+- What the corrected workflow should be
+- What the corrected expected output should be
+- Why this is the correct behavior
+
+Remember:
+- Implementation MUST align with documentation
+- Documentation MUST reflect actual behavior
+- Both must align with the approved design in docs/concepts.md
+```
+
+### Step C: Re-validate (You do this)
+
+After AI fixes the alignment:
+1. Test again following the updated documentation
+2. Verify all outputs now match
+3. Only proceed to next phase when validation passes
+
+---
+
 ## Rules to Paste Into Every Prompt
 
 If the AI ever ignores the templates above, paste this:
@@ -291,6 +500,14 @@ RULES from .github/copilot-instructions.md:
 - Load config via: simulated_city.config.load_config()
 - Use: mqtt.publish_json_checked(client, topic, data)
 - Add dependencies to pyproject.toml, then: pip install -e ".[notebooks]"
+
+✅ DOCUMENTATION & VALIDATION (CRITICAL):
+- Always create runtime documentation (docs/phase_N_runtime.md) with specific expected outputs
+- Write precise expected outputs: "prints: 'Connected to MQTT broker at localhost:1883'" not "prints connection info"
+- Verify your implementation matches the runtime documentation you write
+- If human reports mismatch: fix code OR update documentation to align
+- Both code and documentation must align with approved design (docs/concepts.md)
+- Human will validate using Template 5.5 before moving to next phase
 ```
 
 ---
@@ -312,25 +529,49 @@ RULES from .github/copilot-instructions.md:
 
 ### After Step 3+ (Code)
 
-1. **Copy the code into your notebook or create a new file**
-2. **Run validation:**
+1. **Review the runtime documentation** - Read `docs/phase_N_runtime.md` to understand:
+   - What was created
+   - Expected outputs
+   - How to run the workflows
+   - Debugging guidance
+
+2. **Copy the code into your notebook or create a new file**
+
+3. **Run validation:**
    ```bash
    python scripts/verify_setup.py
    python scripts/validate_structure.py
    python -m pytest
    ```
-3. **Test manually:**
+
+4. **Test manually following the runtime documentation:**
    ```bash
    python -m jupyterlab
-   # Open the notebook, run all cells, verify it works
+   # Follow the "How to Run" workflows in docs/phase_N_runtime.md
+   # Verify each expected output matches what the documentation says
+   # If using MQTT, open mqtt_monitor.ipynb to observe message flow
    ```
-4. **Understand the code:**
+
+5. **Understand the code:**
    - Can you explain what each cell does?
    - Does it match the design in docs/concepts.md?
    - Does it match the phase description in docs/implementationplan.md?
+   - Do the outputs match what's documented in docs/phase_N_runtime.md?
 
-5. **If it works:** Commit, create PR, move to next phase after approval
-6. **If it doesn't work:** Use Template 5 to ask for fixes
+6. **CRITICAL: Validate implementation matches documentation** (Use Template 5.5):
+   - Create a validation report comparing expected vs actual outputs
+   - For EACH workflow in the runtime doc, verify outputs match
+   - If mismatches exist: Use Template 5.5B to fix alignment
+   - Re-test until validation passes
+   - **Do NOT move to next phase until this passes**
+
+7. **Debug if needed:** Use the debugging guidance in the runtime documentation
+   - Enable verbose mode/log levels as documented
+   - Use mqtt_monitor.ipynb to verify message flow
+   - Check troubleshooting section in runtime docs
+
+8. **If validation passes:** Commit code AND runtime docs, create PR, move to next phase after approval
+9. **If validation fails:** Use Template 5.5B to fix alignment, then re-validate
 
 ---
 
@@ -361,6 +602,13 @@ RULES from .github/copilot-instructions.md:
 - ❌ AI hardcodes MQTT settings → **Reject:** "Use config.yaml and config.load_config()."
 - ❌ AI implements Phase 2 when asked for Phase 1 → **Reject:** "Only Phase 1 from docs/implementationplan.md. Stop here."
 - ❌ AI deviates from implementationplan.md → **Reject:** "Follow the approved plan in docs/implementationplan.md exactly."
+- ❌ AI doesn't create runtime documentation → **Reject:** "You must create docs/phase_N_runtime.md with workflows, expected outputs, and debugging guidance."
+- ❌ Runtime doc is vague about expected outputs → **Ask:** "Be specific: what should each cell output? Include example values."
+- ❌ Runtime doc lacks debugging guidance → **Ask:** "Add section on enabling verbose mode, common errors, and troubleshooting steps."
+- ❌ No MQTT monitor for MQTT-based project → **Ask:** "Create notebooks/mqtt_monitor.ipynb to help debug message flow."
+- ❌ Student skips validation step → **Instructor:** "Create validation report using Template 5.5 before moving to next phase."
+- ❌ Implementation doesn't match documentation → **Use Template 5.5B:** "Fix alignment between code and docs."
+- ❌ AI creates vague expected outputs → **Reject:** "Be specific. Don't say 'prints message' - say 'prints: Connected to MQTT broker at localhost:1883'"
 
 ---
 

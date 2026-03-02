@@ -18,19 +18,40 @@ Use the Python helper script. It finds all Python versions on your system, lists
 python3 scripts/create_venv.py
 ```
 
-If you want to skip the prompt and pin the version, pass `--version`:
+### Manual setup ( after the script )
+
+macOS / Linux:
 
 ```bash
-python3 scripts/create_venv.py --version 3.12
+source .venv/bin/activate
+python -m pip install -U pip
+python -m pip install -e ".[dev, geo, notebooks]"
 ```
 
-You can also pin to an exact patch version if it is installed:
+Windows (PowerShell):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+python -m pip install -e ".[dev, geo, notebooks]"
+```
+
+### when returning to the project
+
+If VS- code does not automaticly open the .venv in the terminal thye
+
+macOS / Linux:
 
 ```bash
-python3 scripts/create_venv.py --version 3.12.10
+source .venv/bin/activate
+
 ```
 
-Always use `python -m pip` for installs. It is the most reliable and uniform option across platforms.
+Windows (PowerShell):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
 
 If the script does not list a Python version that is >= 3.11, install it first:
 
@@ -43,12 +64,6 @@ brew install python@3.12
 - Windows: download and run the installer from [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 If you already created `.venv` with the wrong Python version, delete `.venv` and create it again with the correct interpreter.
-
-## Install the library (editable) + workshop tools
-
-```bash
-python -m pip install -e ".[dev,notebooks]"
-```
 
 ### Verify your installation
 

@@ -8,6 +8,32 @@ The workflow is the same whether you submit work via GitHub, folder snapshots, o
 
 This workflow creates **reviewable documentation artifacts** before any code is written. Each artifact becomes part of your git history and can be reviewed by your instructor.
 
+```
+Step 1 (PLAN mode) → docs/concepts.md
+        ↓
+Step 2 (PLAN mode) → docs/implementationplan.md
+        ↓
+Step 3 (AGENT mode) → Code + docs/phase_1_runtime.md
+        ↓
+    ┌───────────────────────────────┐
+    │ Validation Loop (Template 5.5) │
+    │                               │
+    │ Human: Test & compare         │
+    │   ↓                           │
+    │ Match? ✅ → Next phase        │
+    │   ↓                           │
+    │ Mismatch? ❌ → AI fixes       │
+    │   ↓                           │
+    │ Re-test → Loop until match    │
+    └───────────────────────────────┘
+        ↓
+Step 4 (AGENT mode) → Code + docs/phase_2_runtime.md
+        ↓
+    [Validation Loop...]
+        ↓
+    (Continue for each phase)
+```
+
 ### Step 1: Design Clarification → `docs/concepts.md`
 
 **Goal:** Create a clear design document that captures your project's architecture.
@@ -49,22 +75,33 @@ Copy the prompt from [Template 2 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#tem
 
 ### Step 3+: Implement ONE Phase at a Time
 
-**Goal:** Write actual code for one approved phase.
+**Goal:** Write actual code for one approved phase AND document how to run/debug it.
 
-**Mode:** AGENT (AI writes code)
+**Mode:** AGENT (AI writes code and documentation)
 
 Copy the prompt from [Template 3 in PROMPT_TEMPLATES.md](PROMPT_TEMPLATES.md#template-3-phase-1-implementation-phase-3). The AI will:
 - Create notebooks and library code
+- Create runtime documentation (e.g., `docs/phase_1_runtime.md`)
 - Follow the phase description from `implementationplan.md`
 - Apply all rules from `.github/copilot-instructions.md`
 
 **What you do:**
-1. Test the code
-2. Run validation: `python scripts/verify_setup.py && python -m pytest`
-3. Commit and create PR
-4. After instructor approval, move to next phase
+1. **Review the runtime documentation** - Understand expected outputs and workflows
+2. **Test the code** - Follow the workflows in the runtime doc
+3. **Run validation**: `python scripts/verify_setup.py && python -m pytest`
+4. **Validate alignment** - Does implementation match documentation? Use Template 5.5 validation workflow:
+   - For each workflow: Compare expected vs actual output
+   - Document any mismatches
+   - If mismatches exist: Use Template 5.5B to have AI fix alignment
+   - Re-test until implementation matches documentation
+5. **Debug if needed** - Use the debugging guidance in the runtime doc
+6. **Commit both code AND runtime documentation** (only after validation passes)
+7. **Create PR**
+8. After instructor approval, move to next phase
 
-**Key principle:** Each phase builds on the approved previous phase.
+**Key principle:** Each phase builds on the approved previous phase. Each phase includes runtime documentation showing how to run and debug what was built. **Do NOT move to the next phase until you validate that implementation matches documentation.**
+
+**MQTT debugging tip:** If your project uses MQTT, consider creating a `notebooks/mqtt_monitor.ipynb` notebook that subscribes to all topics (`#` wildcard) and prints all messages. This is invaluable for debugging message flow.
 
 ---
 
@@ -151,6 +188,15 @@ You: "Don't install in notebooks. Add to pyproject.toml and run: pip install -e 
 ### ❌ AI implements wrong phase
 You: "Implement only Phase [N] from docs/implementationplan.md. Stop there."
 
+### ❌ AI creates vague expected outputs in runtime doc
+You: "Be specific. Don't say 'prints message' - say 'prints: Connected to MQTT broker at localhost:1883'"
+
+### ❌ Implementation doesn't match runtime documentation
+You: "I tested using Template 5.5 validation. Here's my report: [paste validation report]. Fix the alignment."
+
+### ❌ AI skips runtime documentation
+You: "You must create docs/phase_N_runtime.md with specific expected outputs, workflows, and debugging guidance."
+
 ---
 
 ## Validation Commands
@@ -228,9 +274,13 @@ Before you commit your Phase 1 work:
 - [ ] **docs/concepts.md created and reviewed** ← Design clarification
 - [ ] **docs/implementationplan.md created and reviewed** ← Phased plan
 - [ ] **Only ONE phase implemented** ← Most important!
+- [ ] **docs/phase_N_runtime.md created** ← Runtime documentation with workflows and expected outputs
+- [ ] **Tested using workflows in runtime doc** ← Followed the "How to Run" steps
+- [ ] **Validated implementation matches documentation** ← Actual outputs match expected outputs
+- [ ] **Fixed any mismatches** ← Used Template 5.5B if needed
 - [ ] Tests passing: `python scripts/verify_setup.py && python -m pytest`
 - [ ] Structure valid: `python scripts/validate_structure.py`
-- [ ] PR description references concepts.md and implementationplan.md
+- [ ] PR description references concepts.md, implementationplan.md, and phase_N_runtime.md
 
 ### Workflow: VS Code (with GitHub Desktop as alternative)
 
@@ -305,10 +355,20 @@ Phase 1: Basic agent with MQTT
 
 - [x] Design clarification: docs/concepts.md
 - [x] Implementation plan: docs/implementationplan.md
+- [x] Runtime documentation: docs/phase_1_runtime.md
 
 ## What I Investigated
 
 [Briefly: what did you learn/test from this phase?]
+
+## Expected Outputs (from runtime doc)
+
+[Copy key expected outputs from docs/phase_N_runtime.md - this helps reviewers verify]
+
+Example:
+- Agent notebook cell 3: Should print "Connected to MQTT broker"
+- Agent notebook cell 5: Should publish to topic "city/transport/vehicles"
+- Dashboard updates every 2 seconds with vehicle positions
 
 ## Verification
 
@@ -316,7 +376,10 @@ Ran these commands successfully:
 - [x] python scripts/verify_setup.py
 - [x] python scripts/validate_structure.py
 - [x] python -m pytest
-- [x] Manually tested notebooks (they run without errors)
+- [x] Manually tested using workflows from docs/phase_N_runtime.md
+- [x] **Validated implementation matches documentation** (used Template 5.5 validation)
+- [x] All expected outputs match the runtime documentation
+- [x] Fixed any mismatches between code and documentation
 ```
 
 ### After Your Instructor Reviews
